@@ -1,0 +1,7 @@
+{
+	"_Type": "Action.Type.Message",
+	"ActionResult": {
+		"_Name": "SaveBoxSuccessMessage"
+	},
+	"Message": "Scanned box uploaded successfully in dispatch Id {#Page:Main/#ClientData/HeaderDetail/DispatchId}"
+}

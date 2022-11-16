@@ -1,0 +1,137 @@
+{
+	"Controls": [
+		{
+			"_Type": "Control.Type.SectionedTable",
+			"_Name": "SectionedTable",
+			"Sections": [
+				{
+					"ProfileHeader": {
+						"DetailImage": "sap-icon://shipping-status",
+						"DetailImageIsCircular": false,
+						"Headline": "Dispatch ID: {#Page:Main/#ClientData/HeaderDetail/DispatchId}",
+						"Subheadline": "Transporter: {#Page:Main/#ClientData/HeaderDetail/Transporter}"
+					},
+					"_Type": "Section.Type.ProfileHeader",
+					"_Name": "ProfileHeader",
+					"Visible": true
+				},
+				{
+					"Layout": {
+						"LayoutType": "Vertical",
+						"HorizontalAlignment": "Center"
+					},
+					"_Type": "Section.Type.ButtonTable",
+					"_Name": "ButtonTable",
+					"Visible": true,
+					"EmptySection": {
+						"FooterVisible": false
+					},
+					"Buttons": [
+						{
+							"_Name": "ScanBoxes",
+							"Title": "Scan Sticker",
+							"TextAlignment": "Right",
+							"Alignment": "Right",
+							"ButtonType": "Secondary",
+							"Semantic": "Normal",
+							"Image": "sap-icon://bar-code",
+							"ImagePosition": "Trailing",
+							"FullWidth": false,
+							"Visible": true,
+							"OnPress": {
+								"Handler": "/BoxDispatch/Actions/ScanBox.action",
+								"UserInteraction": {
+									"Enabled": true,
+									"Title": "Scan Sticker"
+								}
+							}
+						}
+					]
+				},
+				{
+					"Row": {
+						"Items": [
+							{
+								"NumberOfLines": 1,
+								"Text": "{#Page:Main/#ClientData/Item/InvoiceNo}",
+								"TextAlignment": "center"
+							},
+							{
+								"NumberOfLines": 1,
+								"Text": "{#Page:Main/#ClientData/Item/BoxId}",
+								"TextAlignment": "center"
+							}
+						],
+						"Layout": {
+							"ColumnWidth": [
+							]
+						}
+					},
+					"_Type": "Section.Type.DataTable",
+					"Target": "{#Page:Main/#ClientData/Item}",
+					"_Name": "DataTable",
+					"Header": {
+						"DataTable": {
+							"Items": [
+								{
+									"NumberOfLines": 1,
+									"Text": "Invoice Number",
+									"TextAlignment": "center"
+								},
+								{
+									"NumberOfLines": 1,
+									"Text": "Box ID",
+									"TextAlignment": "center"
+								}
+							],
+							"Layout": {
+								"ColumnWidth": [
+								]
+							}
+						},
+						"_Name": "DataTableHeader",
+						"UseTopPadding": false
+					},
+					"Visible": true,
+					"EmptySection": {
+						"Caption": "No box scanned",
+						"FooterVisible": false
+					},
+					"DataPaging": {
+						"ShowLoadingIndicator": true,
+						"LoadingIndicatorText": "",
+						"PageSize": 50
+					},
+					"StickyColumn": true
+				}
+			]
+		}
+	],
+	"_Type": "Page",
+	"_Name": "BoxLoad",
+	"Caption": "Box Loading",
+	"PrefersLargeCaption": false,
+	"OnLoaded": "/BoxDispatch/Rules/onLoadingPageLoads.js",
+	"OnUnloaded": "/BoxDispatch/Rules/onLoadingPageUnLoads.js",
+	"ActionBar": {
+		"Items": [
+			{
+				"_Name": "StartLoad",
+				"Caption": "Start",
+				"Position": "Right",
+				"IsIconCircular": false,
+				"Visible": true,
+				"OnPress": "/BoxDispatch/Rules/StartLoad.js"
+			},
+			{
+				"_Name": "StopLoad",
+				"Caption": "Stop",
+				"Position": "Right",
+				"IsIconCircular": false,
+				"Visible": false,
+				"OnPress": "/BoxDispatch/Actions/StopLoadConfirmation.action"
+			}
+		],
+		"_Name": "ActionBar1"
+	}
+}

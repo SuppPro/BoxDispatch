@@ -1,0 +1,10 @@
+{
+    "Service": "/BoxDispatch/Services/DISPATCH.service",
+    "_Type": "Action.Type.ODataService.Initialize",
+    "ShowActivityIndicator": true,
+    "OnSuccess": "/BoxDispatch/Actions/Service/InitializeOnlineSuccessMessage.action",
+    "OnFailure": "/BoxDispatch/Actions/Service/InitializeOnlineFailureMessage.action",
+    "ActionResult": {
+        "_Name": "init"
+    }
+}

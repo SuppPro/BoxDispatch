@@ -1,0 +1,8 @@
+{
+	"_Type": "Action.Type.OpenBarcodeScanner",
+	"ActionResult": {
+		"_Name": "ScanBox"
+	},
+	"OnFailure": "/BoxDispatch/Actions/FailureMessage.action",
+	"OnSuccess": "/BoxDispatch/Rules/ScanBoxSuccess.js"
+}

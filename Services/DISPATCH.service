@@ -1,0 +1,15 @@
+{
+	"DestinationName": "DISPATCH",
+	"Headers": {
+		"loginId": "/BoxDispatch/Rules/SetLoginIdHeader.js",
+		"loginType": "/BoxDispatch/Rules/SetLoginTypeHeader.js"
+	},
+	"OfflineEnabled": false,
+	"OnlineOptions": {
+		"ServiceOptions": {
+			"dataVersion": 200
+		}
+	},
+	"SourceType": "Mobile",
+	"RestService": false
+}

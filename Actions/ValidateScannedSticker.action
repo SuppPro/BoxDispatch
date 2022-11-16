@@ -1,0 +1,13 @@
+{
+	"_Type": "Action.Type.ODataService.Read",
+	"ActionResult": {
+		"_Name": "ValidateScannedSticker"
+	},
+	"OnFailure": "/BoxDispatch/Rules/ValidateScannedStickerFailure.js",
+	"OnSuccess": "/BoxDispatch/Rules/ValidateScannedStickerSuccess.js",
+	"ShowActivityIndicator": true,
+	"Target": {
+		"Service": "/BoxDispatch/Services/DISPATCH.service",
+		"EntitySet": "DispatchDetailsSet"
+	}
+}

@@ -1,0 +1,20 @@
+{
+	"_Type": "Action.Type.ODataService.UpdateEntity",
+	"ActionResult": {
+		"_Name": "StopBoxLoading"
+	},
+	"OnFailure": "/BoxDispatch/Actions/FailureMessage.action",
+	"OnSuccess": "/BoxDispatch/Actions/StopBoxLoadingSuccess.action",
+	"ShowActivityIndicator": true,
+	"Target": {
+		"Service": "/BoxDispatch/Services/DISPATCH.service",
+		"EntitySet": "DispatchDetailsSet"
+	},
+	"Properties": {
+		"BoxId": "",
+		"LoadingsDate": "#Page:Main/#ClientData/HeaderDetail/LoadingsDate",
+		"LoadingsTime": "#Page:Main/#ClientData/HeaderDetail/LoadingsTime",
+		"LoadingeDate": "#Page:Main/#ClientData/HeaderDetail/LoadingeDate",
+		"LoadingeTime": "#Page:Main/#ClientData/HeaderDetail/LoadingeTime"
+	}
+}

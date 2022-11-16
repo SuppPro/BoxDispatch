@@ -1,0 +1,103 @@
+{
+	"Controls": [
+		{
+			"_Type": "Control.Type.FormCellContainer",
+			"_Name": "FormCellContainer0",
+			"Sections": [
+				{
+					"Controls": [
+						{
+							"_Type": "Control.Type.FormCell.SimpleProperty",
+							"_Name": "DriverName",
+							"IsEditable": true,
+							"IsVisible": true,
+							"Caption": "Driver Name",
+							"PlaceHolder": "Enter Name",
+							"Enabled": true
+						},
+						{
+							"_Type": "Control.Type.FormCell.SimpleProperty",
+							"_Name": "DriverLicense",
+							"IsEditable": true,
+							"IsVisible": true,
+							"Caption": "Driver License",
+							"PlaceHolder": "Enter License Number",
+							"Enabled": true
+						},
+						{
+							"_Type": "Control.Type.FormCell.SimpleProperty",
+							"_Name": "VehicleNo",
+							"IsEditable": true,
+							"IsVisible": true,
+							"Caption": "Vehicle Number",
+							"PlaceHolder": "Enter Vehicle Number ",
+							"KeyboardType": "Number",
+							"Enabled": true
+						},
+						{
+							"validationProperties": {
+								"SeparatorIsHidden": true,
+								"ValidationViewIsHidden": true
+							},
+							"_Type": "Control.Type.FormCell.ListPicker",
+							"_Name": "TransporterId",
+							"IsEditable": true,
+							"IsVisible": true,
+							"AllowMultipleSelection": false,
+							"AllowEmptySelection": false,
+							"Caption": "Transporter ID",
+							"DataPaging": {
+								"ShowLoadingIndicator": false,
+								"PageSize": 50
+							},
+							"IsSelectedSectionEnabled": false,
+							"IsPickerDismissedOnSelection": false,
+							"IsSearchCancelledAfterSelection": false,
+							"AllowDefaultValueIfOneItem": false,
+							"PickerItems": {
+								"Target": {
+									"Service": "/BoxDispatch/Services/DISPATCH.service",
+									"EntitySet": "TransportIdHelpSet"
+								},
+								"DisplayValue": "{TransName}",
+								"ReturnValue": "{TransporterId}"
+							}
+						}
+					],
+					"Caption": "Fill below details to generate dispatch ID",
+					"Visible": true
+				}
+			]
+		}
+	],
+	"_Type": "Page",
+	"_Name": "Main",
+	"Caption": "Box Dispatch",
+	"ActionBar": {
+		"Items": [
+			{
+				"_Name": "Generate",
+				"Caption": "Generate",
+				"Position": "Right",
+				"IsIconCircular": false,
+				"Visible": true,
+				"OnPress": "/BoxDispatch/Actions/GenerateDispatchID.action"
+			}
+		],
+		"_Name": "ActionBar1"
+	},
+	"ToolBar": {
+		"Items": [
+			{
+				"_Type": "Control.Type.ToolbarItem",
+				"_Name": "Signout",
+				"Caption": "Sign Out",
+				"Enabled": true,
+				"Visible": true,
+				"Clickable": true,
+				"Style": "",
+				"OnPress": "/BoxDispatch/Actions/Logout.action"
+			}
+		]
+	}
+}

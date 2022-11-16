@@ -1,0 +1,24 @@
+{
+	"_Type": "Action.Type.ODataService.UpdateEntity",
+	"ActionResult": {
+		"_Name": "SaveScannedBox"
+	},
+	"OnFailure": "/BoxDispatch/Rules/SaveScannedBoxFailure.js",
+	"OnSuccess": "/BoxDispatch/Rules/SaveScannedBoxSuccess.js",
+	"ShowActivityIndicator": true,
+	"Target": {
+		"Service": "/BoxDispatch/Services/DISPATCH.service",
+		"EntitySet": "DispatchDetailsSet"
+	},
+	"Properties": {
+		"BoxId": "",
+		"DispatchId": "",
+		"LicensePlate": "",
+		"TransporterId": "#Page:Main/#ClientData/HeaderDetail/Transporter",
+		"VehicleNo": "#Page:Main/#ClientData/HeaderDetail/VehicleNo",
+		"DriverName": "#Page:Main/#ClientData/HeaderDetail/DriverName",
+		"DriverLicense": "#Page:Main/#ClientData/HeaderDetail/DriverLicense",
+		"LoadingsDate": "#Page:Main/#ClientData/HeaderDetail/LoadingsDate",
+		"LoadingsTime": "#Page:Main/#ClientData/HeaderDetail/LoadingsTime"
+	}
+}

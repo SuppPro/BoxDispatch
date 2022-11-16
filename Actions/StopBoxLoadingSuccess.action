@@ -1,0 +1,8 @@
+{
+	"_Type": "Action.Type.Message",
+	"ActionResult": {
+		"_Name": "StopBoxLoadingSuccess"
+	},
+	"Message": "Loading of boxes for dispatch ID {#Page:Main/#ClientData/HeaderDetail/DispatchId} completed successfully",
+	"Title": "Success"
+}

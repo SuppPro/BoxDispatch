@@ -1,0 +1,21 @@
+{
+	"_Type": "Action.Type.ODataService.CreateEntity",
+	"ActionResult": {
+		"_Name": "GenerateDispatchID"
+	},
+	"OnFailure": "/BoxDispatch/Actions/FailureMessage.action",
+	"OnSuccess": "/BoxDispatch/Actions/GenerateDispatchSuccess.action",
+	"ValidationRule": "/BoxDispatch/Rules/ValidateDispatchHeader.js",
+	"ShowActivityIndicator": true,
+	"Target": {
+		"Service": "/BoxDispatch/Services/DISPATCH.service",
+		"EntitySet": "DispatchDetailsSet"
+	},
+	"Properties": {
+		"BoxId": "",
+		"TransporterId": "#Page:Main/#ClientData/HeaderDetail/TransporterId",
+		"VehicleNo": "#Page:Main/#Control:VehicleNo/#Value",
+		"DriverName": "#Page:Main/#Control:DriverName/#Value",
+		"DriverLicense": "#Page:Main/#ClientData/HeaderDetail/DriverLicense"
+	}
+}
