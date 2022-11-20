@@ -1,0 +1,6 @@
+{
+	"_Type": "Action.Type.Navigation",
+	"PageToOpen": "/BoxDispatch/Pages/Main.page",
+	"ClearHistory": false,
+	"NavigationType": "Outer"
+}

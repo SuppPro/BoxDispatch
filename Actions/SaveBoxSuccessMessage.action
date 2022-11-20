@@ -3,5 +3,6 @@
 	"ActionResult": {
 		"_Name": "SaveBoxSuccessMessage"
 	},
-	"Message": "Scanned box uploaded successfully in dispatch Id {#Page:Main/#ClientData/HeaderDetail/DispatchId}"
+	"Message": "Scanned box uploaded successfully in dispatch Id {#Page:Main/#ClientData/HeaderDetail/DispatchId}",
+	"Title": "Success"
 }

@@ -6,6 +6,7 @@ export default function StartLoad(clientAPI) {
 
     clientAPI.getPageProxy().setActionBarItemVisible(0, false); // set start load button visible false
     clientAPI.getPageProxy().setActionBarItemVisible(1, true); // set stop load button visible true
+    clientAPI.evaluateTargetPath('#Page:BoxLoad/#Control:ScanSticker').setEnable(true);
 
     let sdate = new Date();
     let month = checkLength((sdate.getMonth() + 1).toString());

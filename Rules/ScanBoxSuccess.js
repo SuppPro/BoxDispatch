@@ -4,47 +4,39 @@
  */
 export default function ScanBoxSuccess(clientAPI) {
 
-    const hd = clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail;
+    clientAPI.evaluateTargetPath('#Page:BoxLoad/#Control:ScanSticker').clearValidation();
 
-    if (hd.LoadingsDate) {
-        let box = "", plate = "", label = "";
-        const scannedResult = clientAPI.getActionResult('ScanBox').data;
+    const scannedResult = clientAPI.getValue();
+    let box = "", plate = "", label = "";
 
-        if (scannedResult.length === 17) {
-            box = scannedResult;
-        } else if (scannedResult.length === 30) {
-            plate = scannedResult.split(":")[0];
-        } else if (scannedResult.length === 27) {
-            label = scannedResult;
-        } else {
-            return clientAPI.executeAction({
-                'Name': "/BoxDispatch/Actions/FailureMessage.action",
-                "Properties": {
-                    "Message": "Please scan a valid sticker to proceed"
-                }
-            });
-        }
-        return clientAPI.executeAction({
-            // ValidateScannedSticker
-            'Name': "/BoxDispatch/Actions/SaveScannedBox.action",
-            "Properties": {
-                "Target": {
-                    // EntitySet
-                    "ReadLink": validatePath(box, plate, label, hd.DispatchId)
-                }
-            }
-        });
+    if (scannedResult.length === 17) {
+        box = scannedResult;
+    } else if (scannedResult.length === 30) {
+        plate = scannedResult.split(":")[0];
+    } else if (scannedResult.length === 27) {
+        label = scannedResult;
     } else {
-        return clientAPI.executeAction({
-            'Name': "/BoxDispatch/Actions/FailureMessage.action",
-            "Properties": {
-                "Message": "Please press Start and try again"
-            }
-        });
+        clientAPI.evaluateTargetPath('#Page:BoxLoad/#Control:ScanSticker').setValidationProperty('ValidationMessage', "Please scan a valid sticker");
+        clientAPI.evaluateTargetPath('#Page:BoxLoad/#Control:ScanSticker').setValidationProperty('ValidationMessageColor', "FF0000");
+        clientAPI.evaluateTargetPath('#Page:BoxLoad/#Control:ScanSticker').redraw();
+        return;
     }
+
+    clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.BoxId = box;
+    clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.LicensePlate = plate;
+    clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.LabelId = label;
+
+    return clientAPI.executeAction({
+        'Name': "/BoxDispatch/Actions/SaveScannedBox.action",
+        "Properties": {
+            "Target": {
+                "ReadLink": getPath(box, plate, label, clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.DispatchId)
+            }
+        }
+    });
 }
 
-function validatePath(box, plate, label, dispatchId) {
+function getPath(box, plate, label, dispatchId) {
     var oPath = "DispatchDetailsSet(";
     oPath += box !== "" ? "BoxId='" + box + "'," : "BoxId='',";
     oPath += plate !== "" ? "LicensePlate='" + plate + "'," : "LicensePlate='',";

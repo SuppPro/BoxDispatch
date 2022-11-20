@@ -8,12 +8,14 @@
 	"ShowActivityIndicator": true,
 	"Target": {
 		"Service": "/BoxDispatch/Services/DISPATCH.service",
-		"EntitySet": "DispatchDetailsSet"
+		"EntitySet": "DispatchDetailsSet",
+		"ReadLink": "{@odata.readLink}"
 	},
 	"Properties": {
-		"BoxId": "",
-		"DispatchId": "",
-		"LicensePlate": "",
+		"BoxId": "#Page:Main/#ClientData/HeaderDetail/BoxId",
+		"DispatchId": "#Page:Main/#ClientData/HeaderDetail/DispatchId",
+		"LicensePlate": "#Page:Main/#ClientData/HeaderDetail/LicensePlate",
+		"LabelId": "#Page:Main/#ClientData/HeaderDetail/LabelId",
 		"TransporterId": "#Page:Main/#ClientData/HeaderDetail/Transporter",
 		"VehicleNo": "#Page:Main/#ClientData/HeaderDetail/VehicleNo",
 		"DriverName": "#Page:Main/#ClientData/HeaderDetail/DriverName",

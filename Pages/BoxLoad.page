@@ -16,66 +16,42 @@
 					"Visible": true
 				},
 				{
-					"Layout": {
-						"LayoutType": "Vertical",
-						"HorizontalAlignment": "Center"
-					},
-					"_Type": "Section.Type.ButtonTable",
-					"_Name": "ButtonTable",
+					"Controls": [
+						{
+							"_Type": "Control.Type.FormCell.SimpleProperty",
+							"_Name": "ScanSticker",
+							"IsEditable": true,
+							"IsVisible": true,
+							"Caption": "Scan",
+							"PlaceHolder": "Scan Sticker",
+							"OnValueChange": "/BoxDispatch/Rules/ScanBoxSuccess.js",
+							"AlternateInput": "Barcode",
+							"Enabled": false
+						}
+					],
 					"Visible": true,
 					"EmptySection": {
 						"FooterVisible": false
 					},
-					"Buttons": [
-						{
-							"_Name": "ScanBoxes",
-							"Title": "Scan Sticker",
-							"TextAlignment": "Right",
-							"Alignment": "Right",
-							"ButtonType": "Secondary",
-							"Semantic": "Normal",
-							"Image": "sap-icon://bar-code",
-							"ImagePosition": "Trailing",
-							"FullWidth": false,
-							"Visible": true,
-							"OnPress": {
-								"Handler": "/BoxDispatch/Actions/ScanBox.action",
-								"UserInteraction": {
-									"Enabled": true,
-									"Title": "Scan Sticker"
-								}
-							}
-						}
-					]
+					"_Type": "Section.Type.FormCell",
+					"_Name": "SectionFormCell0"
 				},
 				{
-					"Row": {
-						"Items": [
-							{
-								"NumberOfLines": 1,
-								"Text": "{#Page:Main/#ClientData/Item/InvoiceNo}",
-								"TextAlignment": "center"
-							},
-							{
-								"NumberOfLines": 1,
-								"Text": "{#Page:Main/#ClientData/Item/BoxId}",
-								"TextAlignment": "center"
-							}
-						],
-						"Layout": {
-							"ColumnWidth": [
-							]
-						}
-					},
 					"_Type": "Section.Type.DataTable",
-					"Target": "{#Page:Main/#ClientData/Item}",
-					"_Name": "DataTable",
+					"Target": {
+						"Service": "/BoxDispatch/Services/DISPATCH.service",
+						"EntitySet": "DispatchDetailsSet",
+						"QueryOptions": "$filter=DispatchId eq '{{#Page:Main/#ClientData/HeaderDetail/DispatchId}}'"
+					},
+					"_Name": "SectionDataTable",
 					"Header": {
+						"_Name": "SectionDataTableHeader",
+						"UseTopPadding": true,
 						"DataTable": {
 							"Items": [
 								{
 									"NumberOfLines": 1,
-									"Text": "Invoice Number",
+									"Text": "Invoice No",
 									"TextAlignment": "center"
 								},
 								{
@@ -88,18 +64,36 @@
 								"ColumnWidth": [
 								]
 							}
-						},
-						"_Name": "DataTableHeader",
-						"UseTopPadding": false
+						}
 					},
 					"Visible": true,
 					"EmptySection": {
-						"Caption": "No box scanned",
+						"Caption": "No Box Scanned",
 						"FooterVisible": false
 					},
+					"Row": {
+						"Items": [
+							{
+								"NumberOfLines": 1,
+								"Text": "{InvoiceNo}",
+								"TextAlignment": "center"
+							},
+							{
+								"NumberOfLines": 1,
+								"Text": "{BoxId}",
+								"TextAlignment": "center"
+							}
+						],
+						"Layout": {
+							"ColumnWidth": [
+							],
+							"DataSubscriptions": [
+								"DispatchDetailsSet?$filter=DispatchId eq '{{#Page:Main/#ClientData/HeaderDetail/DispatchId}}'"
+							]
+						}
+					},
 					"DataPaging": {
-						"ShowLoadingIndicator": true,
-						"LoadingIndicatorText": "",
+						"ShowLoadingIndicator": false,
 						"PageSize": 50
 					},
 					"StickyColumn": true
