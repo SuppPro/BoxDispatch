@@ -3,24 +3,7 @@
 	"CF": {
 		"Target": "https://api.cf.ap10.hana.ondemand.com",
 		"Organization": "4f50cc78-8900-4e38-b1e2-8d9582b5efa6",
-		"Space": "61630eef-192f-4e0f-be75-522a6b9f6652",
-		"Deploy": {
-			"Destination": [
-				{
-					"CF": "DISPATCH",
-					"MDK": "DISPATCH",
-					"URL": ""
-				}
-			],
-			"Name": "ns.BoxDispatch",
-			"Version": "1.0.0",
-			"AppRouter": "standalone",
-			"WebClient": {
-				"Runtime": "preview",
-				"URL": "https://mdk-webclient-runtime-preview.cfapps.sap.hana.ondemand.com/preview/"
-			},
-			"URL": "https://sona-blw-precision-forgings-limited-cloud-foundry-test-6989230e.cfapps.ap10.hana.ondemand.com/nsBoxDispatch/index.html"
-		}
+		"Space": "61630eef-192f-4e0f-be75-522a6b9f6652"
 	},
 	"MobileService": {
 		"Type": "standard",

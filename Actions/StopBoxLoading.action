@@ -12,6 +12,10 @@
 	},
 	"Properties": {
 		"BoxId": "",
+		"TransporterId": "#Page:Main/#ClientData/HeaderDetail/Transporter",
+		"VehicleNo": "#Page:Main/#ClientData/HeaderDetail/VehicleNo",
+		"DriverName": "#Page:Main/#ClientData/HeaderDetail/DriverName",
+		"DriverLicense": "#Page:Main/#ClientData/HeaderDetail/DriverLicense",
 		"LoadingsDate": "#Page:Main/#ClientData/HeaderDetail/LoadingsDate",
 		"LoadingsTime": "#Page:Main/#ClientData/HeaderDetail/LoadingsTime",
 		"LoadingeDate": "#Page:Main/#ClientData/HeaderDetail/LoadingeDate",

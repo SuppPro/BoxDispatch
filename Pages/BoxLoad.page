@@ -37,48 +37,38 @@
 					"_Name": "SectionFormCell0"
 				},
 				{
-					"_Type": "Section.Type.DataTable",
-					"Target": {
-						"Service": "/BoxDispatch/Services/DISPATCH.service",
-						"EntitySet": "DispatchDetailsSet",
-						"QueryOptions": "$filter=DispatchId eq '{{#Page:Main/#ClientData/HeaderDetail/DispatchId}}'"
-					},
-					"_Name": "SectionDataTable",
 					"Header": {
-						"_Name": "SectionDataTableHeader",
-						"UseTopPadding": true,
-						"DataTable": {
+						"Grid": {
 							"Items": [
 								{
+									"LineBreakMode": "wordWrapping",
 									"NumberOfLines": 1,
 									"Text": "Invoice No",
 									"TextAlignment": "center"
 								},
 								{
+									"LineBreakMode": "wordWrapping",
 									"NumberOfLines": 1,
 									"Text": "Box ID",
 									"TextAlignment": "center"
 								}
-							],
-							"Layout": {
-								"ColumnWidth": [
-								]
-							}
-						}
-					},
-					"Visible": true,
-					"EmptySection": {
-						"Caption": "No Box Scanned",
-						"FooterVisible": false
+							]
+						},
+						"_Name": "SectionGridHeader",
+						"UseTopPadding": true
 					},
 					"Row": {
 						"Items": [
 							{
+								"BindTo": "headline",
+								"LineBreakMode": "wordWrapping",
 								"NumberOfLines": 1,
 								"Text": "{InvoiceNo}",
 								"TextAlignment": "center"
 							},
 							{
+								"BindTo": "statusImage",
+								"LineBreakMode": "wordWrapping",
 								"NumberOfLines": 1,
 								"Text": "{BoxId}",
 								"TextAlignment": "center"
@@ -86,17 +76,32 @@
 						],
 						"Layout": {
 							"ColumnWidth": [
-							],
-							"DataSubscriptions": [
-								"DispatchDetailsSet?$filter=DispatchId eq '{{#Page:Main/#ClientData/HeaderDetail/DispatchId}}'"
+								100,
+								100
 							]
-						}
+						},
+						"AccessoryType": "none"
+					},
+					"_Type": "Section.Type.GridTable",
+					"DataSubscriptions": [
+						"DispatchDetailsSet?$filter=DispatchId eq '{{#Page:Main/#ClientData/HeaderDetail/DispatchId}}'"
+					],
+					"Target": {
+						"Service": "/BoxDispatch/Services/DISPATCH.service",
+						"EntitySet": "DispatchDetailsSet",
+						"QueryOptions": "$filter=DispatchId eq '{{#Page:Main/#ClientData/HeaderDetail/DispatchId}}'"
+					},
+					"_Name": "SectionGridTable",
+					"Visible": true,
+					"EmptySection": {
+						"Caption": "No Box Scanned",
+						"FooterVisible": false
 					},
 					"DataPaging": {
-						"ShowLoadingIndicator": false,
-						"PageSize": 50
-					},
-					"StickyColumn": true
+						"ShowLoadingIndicator": true,
+						"LoadingIndicatorText": "",
+						"PageSize": 100
+					}
 				}
 			]
 		}
