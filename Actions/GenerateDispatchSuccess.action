@@ -1,6 +1,6 @@
 {
 	"_Type": "Action.Type.Message",
-	"Message": "Dispatch Id {#ActionResults:GenerateDispatchID/data/DispatchId} generate successfully",
+	"Message": "Dispatch id generated successfully",
 	"Title": "Success",
 	"OKCaption": "Ok",
 	"OnOK": "/BoxDispatch/Rules/GenerateDispatchSuccessOk.js"

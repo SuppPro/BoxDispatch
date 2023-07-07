@@ -1,0 +1,16 @@
+{
+	"_Type": "Action.Type.ODataService.CreateMedia",
+	"ActionResult": {
+		"_Name": "UploadAttachment"
+	},
+	"ValidationRule": "/BoxDispatch/Rules/ValidateUpload.js",
+	"ShowActivityIndicator": false,
+	"Target": {
+		"Service": "/BoxDispatch/Services/DISPATCH.service",
+		"EntitySet": "AttachmentSet"
+	},
+	"Media": "#Page:BoxLoad/#Control:Attachment/#Value",
+	"Headers": {
+		"slug": "/BoxDispatch/Rules/UploadSlug.js"
+	}
+}

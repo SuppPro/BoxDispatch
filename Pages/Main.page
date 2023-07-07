@@ -31,7 +31,6 @@
 							"IsVisible": true,
 							"Caption": "Vehicle Number",
 							"PlaceHolder": "Enter Vehicle Number ",
-							"KeyboardType": "Number",
 							"Enabled": true
 						},
 						{

@@ -62,11 +62,22 @@
                 <Property Name="Number" Type="Edm.String" Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="BoxQty" Type="Edm.String" Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
+            <EntityType Name="Attachment" m:HasStream="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="DispatchId"/>
+                    <PropertyRef Name="PicName"/>
+                </Key>
+                <Property Name="DispatchId" Type="Edm.String" Nullable="false" sap:unicode="false" sap:label="Dispatch ID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="PicName" Type="Edm.String" Nullable="false" sap:unicode="false" sap:label="Picture Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Mimetype" Type="Edm.String" Nullable="false" sap:unicode="false" sap:label="Mimetype" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Filename" Type="Edm.String" Nullable="false" sap:unicode="false" sap:label="Filename" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
             <EntityContainer Name="SHIV_PACKED_BOX_TRACKING_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
                 <EntitySet Name="TransportIdHelpSet" EntityType="SHIV.PACKED_BOX_TRACKING_SRV.TransportIdHelp" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
                 <EntitySet Name="BoxDetailsSet" EntityType="SHIV.PACKED_BOX_TRACKING_SRV.BoxDetails" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
                 <EntitySet Name="DispatchDetailsSet" EntityType="SHIV.PACKED_BOX_TRACKING_SRV.DispatchDetails" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
                 <EntitySet Name="ValidateInvoiceSet" EntityType="SHIV.PACKED_BOX_TRACKING_SRV.ValidateInvoice" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+                <EntitySet Name="AttachmentSet" EntityType="SHIV.PACKED_BOX_TRACKING_SRV.Attachment" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
             </EntityContainer>
             <atom:link rel="self" href="http://172.16.12.125:8000/sap/opu/odata/shiv/PACKED_BOX_TRACKING_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
             <atom:link rel="latest-version" href="http://172.16.12.125:8000/sap/opu/odata/shiv/PACKED_BOX_TRACKING_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>

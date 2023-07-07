@@ -1,6 +1,6 @@
 {
 	"_Type": "Action.Type.Message",
-	"Message": "Are you sure to stop loading of boxes for dispatch ID {#Page:Main/#ClientData/HeaderDetail/DispatchId} ?",
+	"Message": "Are you sure to stop loading of boxes ?",
 	"Title": "Stop Loading",
 	"OKCaption": "Yes",
 	"OnOK": "/BoxDispatch/Rules/StopLoad.js",

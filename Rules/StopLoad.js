@@ -29,7 +29,7 @@ export default function StopLoad(clientAPI) {
         return clientAPI.executeAction({
             'Name': "/BoxDispatch/Actions/FailureMessage.action",
             "Properties": {
-                "Message": "No box scanned in dispatch ID " + head.DispatchId + ", Please scan atleast one to proceed"
+                "Message": "No box scanned, Please scan atleast one to proceed"
             }
         });
     }

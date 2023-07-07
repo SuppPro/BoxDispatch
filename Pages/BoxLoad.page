@@ -5,15 +5,16 @@
 			"_Name": "SectionedTable",
 			"Sections": [
 				{
+					"_Type": "Section.Type.ProfileHeader",
+					"_Name": "ProfileHeader",
+					"Visible": true,
 					"ProfileHeader": {
 						"DetailImage": "sap-icon://shipping-status",
 						"DetailImageIsCircular": false,
 						"Headline": "Dispatch ID: {#Page:Main/#ClientData/HeaderDetail/DispatchId}",
-						"Subheadline": "Transporter: {#Page:Main/#ClientData/HeaderDetail/Transporter}"
-					},
-					"_Type": "Section.Type.ProfileHeader",
-					"_Name": "ProfileHeader",
-					"Visible": true
+						"Subheadline": "",
+						"ActivityItems": []
+					}
 				},
 				{
 					"Controls": [
@@ -27,6 +28,33 @@
 							"OnValueChange": "/BoxDispatch/Rules/ScanBoxSuccess.js",
 							"AlternateInput": "Barcode",
 							"Enabled": false
+						},
+						{
+							"_Type": "Control.Type.FormCell.Attachment",
+							"_Name": "Attachment",
+							"IsVisible": false,
+							"Separator": true,
+							"OnValueChange": "/BoxDispatch/Actions/UploadAttachment.action",
+							"AttachmentActionType": [
+								"TakePhoto",
+								"AddPhoto",
+								"SelectFile"
+							],
+							"AttachmentTitle": "Add Photos",
+							"AllowedFileTypes": [
+								"jpg",
+								"png"
+							]
+						},
+						{
+							"_Type": "Control.Type.FormCell.Note",
+							"_Name": "FormCellNote",
+							"IsEditable": false,
+							"IsVisible": true,
+							"Separator": true,
+							"PlaceHolder": "Scanned Boxes",
+							"MaxNumberOfLines": 1000,
+							"Enabled": false
 						}
 					],
 					"Visible": true,
@@ -35,73 +63,6 @@
 					},
 					"_Type": "Section.Type.FormCell",
 					"_Name": "SectionFormCell0"
-				},
-				{
-					"Header": {
-						"Grid": {
-							"Items": [
-								{
-									"LineBreakMode": "wordWrapping",
-									"NumberOfLines": 1,
-									"Text": "Invoice No",
-									"TextAlignment": "center"
-								},
-								{
-									"LineBreakMode": "wordWrapping",
-									"NumberOfLines": 1,
-									"Text": "Box ID",
-									"TextAlignment": "center"
-								}
-							]
-						},
-						"_Name": "SectionGridHeader",
-						"UseTopPadding": true
-					},
-					"Row": {
-						"Items": [
-							{
-								"BindTo": "headline",
-								"LineBreakMode": "wordWrapping",
-								"NumberOfLines": 1,
-								"Text": "{InvoiceNo}",
-								"TextAlignment": "center"
-							},
-							{
-								"BindTo": "statusImage",
-								"LineBreakMode": "wordWrapping",
-								"NumberOfLines": 1,
-								"Text": "{BoxId}",
-								"TextAlignment": "center"
-							}
-						],
-						"Layout": {
-							"ColumnWidth": [
-								100,
-								100
-							]
-						},
-						"AccessoryType": "none"
-					},
-					"_Type": "Section.Type.GridTable",
-					"DataSubscriptions": [
-						"DispatchDetailsSet?$filter=DispatchId eq '{{#Page:Main/#ClientData/HeaderDetail/DispatchId}}'"
-					],
-					"Target": {
-						"Service": "/BoxDispatch/Services/DISPATCH.service",
-						"EntitySet": "DispatchDetailsSet",
-						"QueryOptions": "$filter=DispatchId eq '{{#Page:Main/#ClientData/HeaderDetail/DispatchId}}'"
-					},
-					"_Name": "SectionGridTable",
-					"Visible": true,
-					"EmptySection": {
-						"Caption": "No Box Scanned",
-						"FooterVisible": false
-					},
-					"DataPaging": {
-						"ShowLoadingIndicator": true,
-						"LoadingIndicatorText": "",
-						"PageSize": 100
-					}
 				}
 			]
 		}

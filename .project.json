@@ -1,33 +1,41 @@
 {
-	"Credential": "cf",
+	"Onboarding": {
+		"Schema": "sapmobilesvcs",
+		"TimeZone": "UTC",
+		"URL": "sapmobilesvcs://?AppId=DISPATCH&ClientId=c3c51938-80a8-4a78-982d-d1e01c046ff0&ServerUrl=https://cloud-foundry-test-libvku6v-dev-dispatch.cfapps.ap10.hana.ondemand.com&SapCloudPlatformEndpoint=https://cloud-foundry-test-libvku6v-dev-dispatch.cfapps.ap10.hana.ondemand.com&AuthorizationEndpointUrl=https://cloud-foundry-test-libvku6v-dev-dispatch.cfapps.ap10.hana.ondemand.com/oauth2/api/v1/authorize&RedirectUrl=https://cloud-foundry-test-libvku6v-dev-dispatch.cfapps.ap10.hana.ondemand.com&TokenUrl=https://cloud-foundry-test-libvku6v-dev-dispatch.cfapps.ap10.hana.ondemand.com/oauth2/api/v1/token&multiUser=false"
+	},
 	"CF": {
 		"Target": "https://api.cf.ap10.hana.ondemand.com",
-		"Organization": "4f50cc78-8900-4e38-b1e2-8d9582b5efa6",
-		"Space": "61630eef-192f-4e0f-be75-522a6b9f6652"
+		"Organization": "a9ae898e-7c91-4565-85ad-48483d7c26d7",
+		"Space": "9495526b-d596-4acc-9c0e-3f731ee8d6e1",
+		"Deploy": {
+			"Destination": [
+				{
+					"CF": "DISPATCH",
+					"MDK": "DISPATCH",
+					"URL": ""
+				}
+			],
+			"Name": "ns.BoxDispatch",
+			"Version": "1.0.0",
+			"AppRouter": "standalone",
+			"WebClient": {
+				"Runtime": "preview",
+				"URL": "https://mdk-webclient-runtime-preview.cfapps.sap.hana.ondemand.com/preview/"
+			}
+		}
 	},
 	"MobileService": {
 		"Type": "standard",
-		"AdminAPI": "https://mobile-service-cockpit-api.cfapps.ap10.hana.ondemand.com/cockpit/v1/org/4f50cc78-8900-4e38-b1e2-8d9582b5efa6/space/61630eef-192f-4e0f-be75-522a6b9f6652",
+		"AdminAPI": "https://mobile-service-cockpit-api.cfapps.ap10.hana.ondemand.com/cockpit/v1/org/a9ae898e-7c91-4565-85ad-48483d7c26d7/space/9495526b-d596-4acc-9c0e-3f731ee8d6e1",
 		"AppId": "DISPATCH",
 		"Destination": [
 			"DISPATCH"
 		]
 	},
-	"Onboarding": {
-		"Schema": "sapmobilesvcs",
-		"TimeZone": "UTC",
-		"URL": "sapmobilesvcs://?AppId=DISPATCH&ClientId=c3c51938-80a8-4a78-982d-d1e01c046ff0&ServerUrl=https://supplier-portal-cf-qas-vg557kji-qas-dispatch.cfapps.ap10.hana.ondemand.com&SapCloudPlatformEndpoint=https://supplier-portal-cf-qas-vg557kji-qas-dispatch.cfapps.ap10.hana.ondemand.com&AuthorizationEndpointUrl=https://supplier-portal-cf-qas-vg557kji-qas-dispatch.cfapps.ap10.hana.ondemand.com/oauth2/api/v1/authorize&RedirectUrl=https://supplier-portal-cf-qas-vg557kji-qas-dispatch.cfapps.ap10.hana.ondemand.com&TokenUrl=https://supplier-portal-cf-qas-vg557kji-qas-dispatch.cfapps.ap10.hana.ondemand.com/oauth2/api/v1/token&multiUser=false"
-	},
-	"LCAP": {
-		"FullName": "",
-		"Service": [],
-		"sourceTemplate": {
-			"id": "html5moduletemplates.basicSAPUI5ApplicationProjectModule",
-			"version": "1.40.12"
-		}
-	},
 	"Build": {
-		"SourceMap": true,
+		"SourceMap": false,
+		"TSTarget": "es6",
 		"WMF": false
 	}
 }
