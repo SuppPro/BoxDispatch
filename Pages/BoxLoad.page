@@ -93,5 +93,20 @@
 			}
 		],
 		"_Name": "ActionBar1"
+	},
+	"ToolBar": {
+		"Items": [
+			{
+				"_Type": "Control.Type.ToolbarItem",
+				"_Name": "ToolbarItem0",
+				"Caption": "Cancel",
+				"Enabled": true,
+				"Visible": true,
+				"Clickable": true,
+				"ItemType": "Normal",
+				"Style": "",
+				"OnPress": "/BoxDispatch/Actions/CancelDispatchConfirmation.action"
+			}
+		]
 	}
 }

@@ -1,0 +1,12 @@
+{
+	"_Type": "Action.Type.ODataService.DeleteEntity",
+	"ActionResult": {
+		"_Name": "CancelDispatch"
+	},
+	"OnFailure": "/BoxDispatch/Actions/FailureMessage.action",
+	"OnSuccess": "/BoxDispatch/Actions/ClosePage.action",
+	"Target": {
+		"Service": "/BoxDispatch/Services/DISPATCH.service",
+		"EntitySet": "DispatchDetailsSet"
+	}
+}

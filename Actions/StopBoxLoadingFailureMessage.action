@@ -1,0 +1,9 @@
+{
+	"_Type": "Action.Type.Message",
+	"ActionResult": {
+		"_Name": "StopBoxLoadingFailureMessage"
+	},
+	"Message": "An error occurred while processing your request. please try again",
+	"Title": "Warning",
+	"OnOK": "/BoxDispatch/Actions/NavToMain.action"
+}

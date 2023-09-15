@@ -9,7 +9,7 @@ export default function SaveScannedBoxSuccess(clientAPI) {
     const data = clientAPI.evaluateTargetPath("#ActionResults:SaveScannedBox/data"),
         str = data.split('DispatchDetailsSet')[1];
 
-    clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().LineItem.unshift({
+    clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().LineItem.push({
         "InvoiceNo": clientAPI.evaluateTargetPath("#ActionResults:SaveScannedBox/data/InvoiceNo"),
         "BoxId": str.substring(str.indexOf("=") + 2, str.indexOf(",") - 1)
     });
@@ -19,6 +19,9 @@ export default function SaveScannedBoxSuccess(clientAPI) {
         val += index + 1 + ". InvoiceNo : " + item.InvoiceNo + ", BoxId : " + item.BoxId + "\r\n";
     });
     clientAPI.evaluateTargetPath('#Page:BoxLoad/#Control:FormCellNote').setValue(val);
+
+    let head = clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail;
+    head.Count = clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().LineItem.length;
 
     return clientAPI.executeAction({
         'Name': "/BoxDispatch/Actions/SaveBoxSuccessMessage.action"

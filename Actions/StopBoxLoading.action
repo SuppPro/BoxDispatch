@@ -3,7 +3,7 @@
 	"ActionResult": {
 		"_Name": "StopBoxLoading"
 	},
-	"OnFailure": "/BoxDispatch/Actions/FailureMessage.action",
+	"OnFailure": "/BoxDispatch/Rules/StopBoxLoadingFailure.js",
 	"OnSuccess": "/BoxDispatch/Actions/StopBoxLoadingSuccess.action",
 	"ShowActivityIndicator": true,
 	"Target": {
@@ -12,6 +12,7 @@
 	},
 	"Properties": {
 		"BoxId": "",
+		"DispatchId": "#Page:Main/#ClientData/HeaderDetail/DispatchId",
 		"TransporterId": "#Page:Main/#ClientData/HeaderDetail/Transporter",
 		"VehicleNo": "#Page:Main/#ClientData/HeaderDetail/VehicleNo",
 		"DriverName": "#Page:Main/#ClientData/HeaderDetail/DriverName",

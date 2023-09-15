@@ -31,6 +31,8 @@
 							"IsVisible": true,
 							"Caption": "Vehicle Number",
 							"PlaceHolder": "Enter Vehicle Number ",
+							"KeyboardType": "Default",
+							"AlternateInput": "None",
 							"Enabled": true
 						},
 						{
@@ -63,6 +65,7 @@
 							}
 						}
 					],
+					"_Name": "FormCellSection0",
 					"Caption": "Fill below details to generate dispatch ID",
 					"Visible": true
 				}

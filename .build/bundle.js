@@ -133,6 +133,35 @@ function AppUpdateSuccess(clientAPI) {
 
 /***/ }),
 
+/***/ "./build.definitions/BoxDispatch/Rules/CancelDispatch.js":
+/*!***************************************************************!*\
+  !*** ./build.definitions/BoxDispatch/Rules/CancelDispatch.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ CancelDispatch)
+/* harmony export */ });
+/**
+ * Describe this function...
+ * @param {IClientAPI} clientAPI
+ */
+function CancelDispatch(clientAPI) {
+  const head = clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail;
+  return clientAPI.executeAction({
+    'Name': "/BoxDispatch/Actions/CancelDispatch.action",
+    "Properties": {
+      "Target": {
+        "ReadLink": "DispatchDetailsSet(BoxId='',LicensePlate='',LabelId='',DispatchId='" + head.DispatchId + "')"
+      }
+    }
+  });
+}
+
+/***/ }),
+
 /***/ "./build.definitions/BoxDispatch/Rules/GenerateDispatchSuccessOk.js":
 /*!**************************************************************************!*\
   !*** ./build.definitions/BoxDispatch/Rules/GenerateDispatchSuccessOk.js ***!
@@ -202,14 +231,51 @@ __webpack_require__.r(__webpack_exports__);
  */
 function SaveScannedBoxFailure(clientAPI) {
   const err = clientAPI.actionResults.SaveScannedBox.error.responseBody,
-    msg = JSON.parse(err).message;
+    errString = err.split("message")[2].split(",")[0],
+    error = errString.substring(3, errString.length - 1);
   clientAPI.evaluateTargetPath('#Page:BoxLoad/#Control:ScanSticker').setValue("");
-  return clientAPI.executeAction({
-    'Name': "/BoxDispatch/Actions/FailureMessage.action",
-    "Properties": {
-      "Message": msg
+  if (err.split(",")[0].includes("S")) {
+    const msg = clientAPI.evaluateTargetPath("#ActionResults:SaveScannedBox").error.message,
+      bId = msg.split('BoxId=')[1].split(',')[0];
+    // invNo = msg.split('message')[2].split(" ")[3];
+
+    let val = "";
+    if (!msg.split('message')[2].includes("removed from the Dispatch Id")) {
+      clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().LineItem.push({
+        "InvoiceNo": error.split("invoice")[1].trim(),
+        "BoxId": bId.substring(1, bId.length - 1)
+      });
+      clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().LineItem.forEach((item, index) => {
+        val += index + 1 + ". Invoice No : " + item.InvoiceNo + ", Box Id : " + item.BoxId + "\r\n";
+      });
+    } else {
+      const items = clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().LineItem.filter(item => item.BoxId !== bId.substring(1, bId.length - 1));
+      clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().LineItem = items;
+      if (items.length > 0) {
+        items.forEach((item, index) => {
+          val += index + 1 + ". Invoice No : " + item.InvoiceNo + ", Box Id : " + item.BoxId + "\r\n";
+        });
+      }
     }
-  });
+    clientAPI.evaluateTargetPath('#Page:BoxLoad/#Control:FormCellNote').setValue(val);
+    let head = clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail;
+    head.Count = clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().LineItem.length;
+
+    // errString.message
+    return clientAPI.executeAction({
+      'Name': "/BoxDispatch/Actions/SaveBoxSuccessMessage.action",
+      "Properties": {
+        "Message": error
+      }
+    });
+  } else {
+    return clientAPI.executeAction({
+      'Name': "/BoxDispatch/Actions/FailureMessage.action",
+      "Properties": {
+        "Message": error
+      }
+    });
+  }
 }
 
 /***/ }),
@@ -233,7 +299,7 @@ function SaveScannedBoxSuccess(clientAPI) {
   clientAPI.evaluateTargetPath('#Page:BoxLoad/#Control:ScanSticker').setValue("");
   const data = clientAPI.evaluateTargetPath("#ActionResults:SaveScannedBox/data"),
     str = data.split('DispatchDetailsSet')[1];
-  clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().LineItem.unshift({
+  clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().LineItem.push({
     "InvoiceNo": clientAPI.evaluateTargetPath("#ActionResults:SaveScannedBox/data/InvoiceNo"),
     "BoxId": str.substring(str.indexOf("=") + 2, str.indexOf(",") - 1)
   });
@@ -242,6 +308,8 @@ function SaveScannedBoxSuccess(clientAPI) {
     val += index + 1 + ". InvoiceNo : " + item.InvoiceNo + ", BoxId : " + item.BoxId + "\r\n";
   });
   clientAPI.evaluateTargetPath('#Page:BoxLoad/#Control:FormCellNote').setValue(val);
+  let head = clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail;
+  head.Count = clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().LineItem.length;
   return clientAPI.executeAction({
     'Name': "/BoxDispatch/Actions/SaveBoxSuccessMessage.action"
   });
@@ -270,10 +338,11 @@ function ScanBoxSuccess(clientAPI) {
   let box = "",
     plate = "",
     label = "";
-  if (scannedResult.length === 17) {
+  if (scannedResult.length === 17 || scannedResult.length === 18) {
     box = scannedResult;
   } else if (scannedResult.length === 30) {
-    plate = scannedResult.split(":")[0];
+    // plate = scannedResult.split(":")[0];
+    plate = scannedResult;
   } else if (scannedResult.length === 27) {
     label = scannedResult;
   } else {
@@ -384,6 +453,47 @@ function checkLength(field) {
     return "0" + field;
   } else {
     return field;
+  }
+}
+
+/***/ }),
+
+/***/ "./build.definitions/BoxDispatch/Rules/StopBoxLoadingFailure.js":
+/*!**********************************************************************!*\
+  !*** ./build.definitions/BoxDispatch/Rules/StopBoxLoadingFailure.js ***!
+  \**********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ StopBoxLoadingFailure)
+/* harmony export */ });
+/**
+ * Describe this function...
+ * @param {IClientAPI} clientAPI
+ */
+function StopBoxLoadingFailure(clientAPI) {
+  const err = clientAPI.actionResults.StopBoxLoading.error.responseBody,
+    errString = err.split("message")[2].split(",")[0],
+    error = errString.substring(3, errString.length - 1);
+  // errString = JSON.parse(err);
+
+  // errString.message
+  if (err.split(",")[0].includes("W")) {
+    return clientAPI.executeAction({
+      'Name': "/BoxDispatch/Actions/StopBoxLoadingFailureMessage.action",
+      "Properties": {
+        "Message": error
+      }
+    });
+  } else {
+    return clientAPI.executeAction({
+      'Name': "/BoxDispatch/Actions/FailureMessage.action",
+      "Properties": {
+        "Message": error
+      }
+    });
   }
 }
 
@@ -623,10 +733,32 @@ function onLoadingPageUnLoads(clientAPI) {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 // Imports
-var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.6.0/node_modules/css-loader/dist/runtime/api.js */ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.6.0/node_modules/css-loader/dist/runtime/api.js");
-var ___CSS_LOADER_EXPORT___ = ___CSS_LOADER_API_IMPORT___(function(i){return i[1]});
+var ___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___ = __webpack_require__(/*! ../../../../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/noSourceMaps.js */ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/noSourceMaps.js");
+var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/api.js */ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/api.js");
+var ___CSS_LOADER_EXPORT___ = ___CSS_LOADER_API_IMPORT___(___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___);
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "/* The LESS stylesheet provides the ability to define styling styles that can be used to style the UI in the MDK app.\n\nExamples:\n\n@mdkYellow1: #ffbb33;\n@mdkRed1: #ff0000;\n\n//// By-Type style: All Pages in the application will now have a yellow background\ndiv.MDKPage\n\n{ background-color: @mdkYellow1; }\n//// By-Name style: All Buttons with _Name == \"BlueButton\" will now have this style\n#BlueButton\n\n{ color: @mdkYellow1; background-color: #0000FF; }\n//// By-Class style: These style classes can be referenced from rules and set using ClientAPI setStyle function\n\n.MyButton\n\n{ color: @mdkYellow1; background-color: @mdkRed1; }\n*/\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, `/* The LESS stylesheet provides the ability to define styling styles that can be used to style the UI in the MDK app.
+
+Examples:
+
+@mdkYellow1: #ffbb33;
+@mdkRed1: #ff0000;
+
+//// By-Type style: All Pages in the application will now have a yellow background
+div.MDKPage
+
+{ background-color: @mdkYellow1; }
+//// By-Name style: All Buttons with _Name == "BlueButton" will now have this style
+#BlueButton
+
+{ color: @mdkYellow1; background-color: #0000FF; }
+//// By-Class style: These style classes can be referenced from rules and set using ClientAPI setStyle function
+
+.MyButton
+
+{ color: @mdkYellow1; background-color: @mdkRed1; }
+*/
+`, ""]);
 // Exports
 module.exports = ___CSS_LOADER_EXPORT___;
 
@@ -640,10 +772,31 @@ module.exports = ___CSS_LOADER_EXPORT___;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 // Imports
-var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.6.0/node_modules/css-loader/dist/runtime/api.js */ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.6.0/node_modules/css-loader/dist/runtime/api.js");
-var ___CSS_LOADER_EXPORT___ = ___CSS_LOADER_API_IMPORT___(function(i){return i[1]});
+var ___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___ = __webpack_require__(/*! ../../../../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/noSourceMaps.js */ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/noSourceMaps.js");
+var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/api.js */ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/api.js");
+var ___CSS_LOADER_EXPORT___ = ___CSS_LOADER_API_IMPORT___(___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___);
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "/* The LESS stylesheet provides the ability to define styling styles that can be used to style the UI in the MDK app.\n\nExamples:\n\n@mdkYellow1: #ffbb33;\n@mdkRed1: #ff0000;\n\n//// By-Type style: All Pages in the application will now have a yellow background\nPage\n\n{ background-color: @mdkYellow1; }\n//// By-Name style: All Buttons with _Name == \"BlueButton\" will now have this style\n#BlueButton\n\n{ color: @mdkYellow1; background-color: #0000FF; }\n//// By-Class style: These style classes can be referenced from rules and set using ClientAPI setStyle function\n\n.MyButton\n\n{ color: @mdkYellow1; background-color: @mdkRed1; }\n*/", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, `/* The LESS stylesheet provides the ability to define styling styles that can be used to style the UI in the MDK app.
+
+Examples:
+
+@mdkYellow1: #ffbb33;
+@mdkRed1: #ff0000;
+
+//// By-Type style: All Pages in the application will now have a yellow background
+Page
+
+{ background-color: @mdkYellow1; }
+//// By-Name style: All Buttons with _Name == "BlueButton" will now have this style
+#BlueButton
+
+{ color: @mdkYellow1; background-color: #0000FF; }
+//// By-Class style: These style classes can be referenced from rules and set using ClientAPI setStyle function
+
+.MyButton
+
+{ color: @mdkYellow1; background-color: @mdkRed1; }
+*/`, ""]);
 // Exports
 module.exports = ___CSS_LOADER_EXPORT___;
 
@@ -657,19 +810,20 @@ module.exports = ___CSS_LOADER_EXPORT___;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 // Imports
-var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.6.0/node_modules/css-loader/dist/runtime/api.js */ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.6.0/node_modules/css-loader/dist/runtime/api.js");
-var ___CSS_LOADER_EXPORT___ = ___CSS_LOADER_API_IMPORT___(function(i){return i[1]});
+var ___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___ = __webpack_require__(/*! ../../../../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/noSourceMaps.js */ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/noSourceMaps.js");
+var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/api.js */ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/api.js");
+var ___CSS_LOADER_EXPORT___ = ___CSS_LOADER_API_IMPORT___(___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___);
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ``, ""]);
 // Exports
 module.exports = ___CSS_LOADER_EXPORT___;
 
 
 /***/ }),
 
-/***/ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.6.0/node_modules/css-loader/dist/runtime/api.js":
+/***/ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/api.js":
 /*!***********************************************************************************************************************!*\
-  !*** ../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.6.0/node_modules/css-loader/dist/runtime/api.js ***!
+  !*** ../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/api.js ***!
   \***********************************************************************************************************************/
 /***/ ((module) => {
 
@@ -680,65 +834,99 @@ module.exports = ___CSS_LOADER_EXPORT___;
   MIT License http://www.opensource.org/licenses/mit-license.php
   Author Tobias Koppers @sokra
 */
-// css base code, injected by the css-loader
-// eslint-disable-next-line func-names
 module.exports = function (cssWithMappingToString) {
-  var list = []; // return the list of modules as css string
+  var list = [];
 
+  // return the list of modules as css string
   list.toString = function toString() {
     return this.map(function (item) {
-      var content = cssWithMappingToString(item);
-
-      if (item[2]) {
-        return "@media ".concat(item[2], " {").concat(content, "}");
+      var content = "";
+      var needLayer = typeof item[5] !== "undefined";
+      if (item[4]) {
+        content += "@supports (".concat(item[4], ") {");
       }
-
+      if (item[2]) {
+        content += "@media ".concat(item[2], " {");
+      }
+      if (needLayer) {
+        content += "@layer".concat(item[5].length > 0 ? " ".concat(item[5]) : "", " {");
+      }
+      content += cssWithMappingToString(item);
+      if (needLayer) {
+        content += "}";
+      }
+      if (item[2]) {
+        content += "}";
+      }
+      if (item[4]) {
+        content += "}";
+      }
       return content;
     }).join("");
-  }; // import a list of modules into the list
-  // eslint-disable-next-line func-names
+  };
 
-
-  list.i = function (modules, mediaQuery, dedupe) {
+  // import a list of modules into the list
+  list.i = function i(modules, media, dedupe, supports, layer) {
     if (typeof modules === "string") {
-      // eslint-disable-next-line no-param-reassign
-      modules = [[null, modules, ""]];
+      modules = [[null, modules, undefined]];
     }
-
     var alreadyImportedModules = {};
-
     if (dedupe) {
-      for (var i = 0; i < this.length; i++) {
-        // eslint-disable-next-line prefer-destructuring
-        var id = this[i][0];
-
+      for (var k = 0; k < this.length; k++) {
+        var id = this[k][0];
         if (id != null) {
           alreadyImportedModules[id] = true;
         }
       }
     }
-
-    for (var _i = 0; _i < modules.length; _i++) {
-      var item = [].concat(modules[_i]);
-
+    for (var _k = 0; _k < modules.length; _k++) {
+      var item = [].concat(modules[_k]);
       if (dedupe && alreadyImportedModules[item[0]]) {
-        // eslint-disable-next-line no-continue
         continue;
       }
-
-      if (mediaQuery) {
-        if (!item[2]) {
-          item[2] = mediaQuery;
+      if (typeof layer !== "undefined") {
+        if (typeof item[5] === "undefined") {
+          item[5] = layer;
         } else {
-          item[2] = "".concat(mediaQuery, " and ").concat(item[2]);
+          item[1] = "@layer".concat(item[5].length > 0 ? " ".concat(item[5]) : "", " {").concat(item[1], "}");
+          item[5] = layer;
         }
       }
-
+      if (media) {
+        if (!item[2]) {
+          item[2] = media;
+        } else {
+          item[1] = "@media ".concat(item[2], " {").concat(item[1], "}");
+          item[2] = media;
+        }
+      }
+      if (supports) {
+        if (!item[4]) {
+          item[4] = "".concat(supports);
+        } else {
+          item[1] = "@supports (".concat(item[4], ") {").concat(item[1], "}");
+          item[4] = supports;
+        }
+      }
       list.push(item);
     }
   };
-
   return list;
+};
+
+/***/ }),
+
+/***/ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/noSourceMaps.js":
+/*!********************************************************************************************************************************!*\
+  !*** ../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/noSourceMaps.js ***!
+  \********************************************************************************************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+module.exports = function (i) {
+  return i[1];
 };
 
 /***/ }),
@@ -749,7 +937,7 @@ module.exports = function (cssWithMappingToString) {
   \**********************************************************/
 /***/ ((module) => {
 
-module.exports = {"Controls":[{"_Type":"Control.Type.SectionedTable","_Name":"SectionedTable","Sections":[{"_Type":"Section.Type.ProfileHeader","_Name":"ProfileHeader","Visible":true,"ProfileHeader":{"DetailImage":"sap-icon://shipping-status","DetailImageIsCircular":false,"Headline":"Dispatch ID: {#Page:Main/#ClientData/HeaderDetail/DispatchId}","Subheadline":"","ActivityItems":[]}},{"Controls":[{"_Type":"Control.Type.FormCell.SimpleProperty","_Name":"ScanSticker","IsEditable":true,"IsVisible":true,"Caption":"Scan","PlaceHolder":"Scan Sticker","OnValueChange":"/BoxDispatch/Rules/ScanBoxSuccess.js","AlternateInput":"Barcode","Enabled":false},{"_Type":"Control.Type.FormCell.Attachment","_Name":"Attachment","IsVisible":false,"Separator":true,"OnValueChange":"/BoxDispatch/Actions/UploadAttachment.action","AttachmentActionType":["TakePhoto","AddPhoto","SelectFile"],"AttachmentTitle":"Add Photos","AllowedFileTypes":["jpg","png"]},{"_Type":"Control.Type.FormCell.Note","_Name":"FormCellNote","IsEditable":false,"IsVisible":true,"Separator":true,"PlaceHolder":"Scanned Boxes","MaxNumberOfLines":1000,"Enabled":false}],"Visible":true,"EmptySection":{"FooterVisible":false},"_Type":"Section.Type.FormCell","_Name":"SectionFormCell0"}]}],"_Type":"Page","_Name":"BoxLoad","Caption":"Box Loading","PrefersLargeCaption":false,"OnLoaded":"/BoxDispatch/Rules/onLoadingPageLoads.js","OnUnloaded":"/BoxDispatch/Rules/onLoadingPageUnLoads.js","ActionBar":{"Items":[{"_Name":"StartLoad","Caption":"Start","Position":"Right","IsIconCircular":false,"Visible":true,"OnPress":"/BoxDispatch/Rules/StartLoad.js"},{"_Name":"StopLoad","Caption":"Stop","Position":"Right","IsIconCircular":false,"Visible":false,"OnPress":"/BoxDispatch/Actions/StopLoadConfirmation.action"}],"_Name":"ActionBar1"}}
+module.exports = {"Controls":[{"_Type":"Control.Type.SectionedTable","_Name":"SectionedTable","Sections":[{"_Type":"Section.Type.ProfileHeader","_Name":"ProfileHeader","Visible":true,"ProfileHeader":{"DetailImage":"sap-icon://shipping-status","DetailImageIsCircular":false,"Headline":"Dispatch ID: {#Page:Main/#ClientData/HeaderDetail/DispatchId}","Subheadline":"","ActivityItems":[]}},{"Controls":[{"_Type":"Control.Type.FormCell.SimpleProperty","_Name":"ScanSticker","IsEditable":true,"IsVisible":true,"Caption":"Scan","PlaceHolder":"Scan Sticker","OnValueChange":"/BoxDispatch/Rules/ScanBoxSuccess.js","AlternateInput":"Barcode","Enabled":false},{"_Type":"Control.Type.FormCell.Attachment","_Name":"Attachment","IsVisible":false,"Separator":true,"OnValueChange":"/BoxDispatch/Actions/UploadAttachment.action","AttachmentActionType":["TakePhoto","AddPhoto","SelectFile"],"AttachmentTitle":"Add Photos","AllowedFileTypes":["jpg","png"]},{"_Type":"Control.Type.FormCell.Note","_Name":"FormCellNote","IsEditable":false,"IsVisible":true,"Separator":true,"PlaceHolder":"Scanned Boxes","MaxNumberOfLines":1000,"Enabled":false}],"Visible":true,"EmptySection":{"FooterVisible":false},"_Type":"Section.Type.FormCell","_Name":"SectionFormCell0"}]}],"_Type":"Page","_Name":"BoxLoad","Caption":"Box Loading","PrefersLargeCaption":false,"OnLoaded":"/BoxDispatch/Rules/onLoadingPageLoads.js","OnUnloaded":"/BoxDispatch/Rules/onLoadingPageUnLoads.js","ActionBar":{"Items":[{"_Name":"StartLoad","Caption":"Start","Position":"Right","IsIconCircular":false,"Visible":true,"OnPress":"/BoxDispatch/Rules/StartLoad.js"},{"_Name":"StopLoad","Caption":"Stop","Position":"Right","IsIconCircular":false,"Visible":false,"OnPress":"/BoxDispatch/Actions/StopLoadConfirmation.action"}],"_Name":"ActionBar1"},"ToolBar":{"Items":[{"_Type":"Control.Type.ToolbarItem","_Name":"ToolbarItem0","Caption":"Cancel","Enabled":true,"Visible":true,"Clickable":true,"ItemType":"Normal","Style":"","OnPress":"/BoxDispatch/Actions/CancelDispatchConfirmation.action"}]}}
 
 /***/ }),
 
@@ -759,7 +947,7 @@ module.exports = {"Controls":[{"_Type":"Control.Type.SectionedTable","_Name":"Se
   \*******************************************************/
 /***/ ((module) => {
 
-module.exports = {"Controls":[{"_Type":"Control.Type.FormCellContainer","_Name":"FormCellContainer0","Sections":[{"Controls":[{"_Type":"Control.Type.FormCell.SimpleProperty","_Name":"DriverName","IsEditable":true,"IsVisible":true,"Caption":"Driver Name","PlaceHolder":"Enter Name","Enabled":true},{"_Type":"Control.Type.FormCell.SimpleProperty","_Name":"DriverLicense","IsEditable":true,"IsVisible":true,"Caption":"Driver License","PlaceHolder":"Enter License Number","Enabled":true},{"_Type":"Control.Type.FormCell.SimpleProperty","_Name":"VehicleNo","IsEditable":true,"IsVisible":true,"Caption":"Vehicle Number","PlaceHolder":"Enter Vehicle Number ","Enabled":true},{"validationProperties":{"SeparatorIsHidden":true,"ValidationViewIsHidden":true},"_Type":"Control.Type.FormCell.ListPicker","_Name":"TransporterId","IsEditable":true,"IsVisible":true,"AllowMultipleSelection":false,"AllowEmptySelection":false,"Caption":"Transporter ID","DataPaging":{"ShowLoadingIndicator":false,"PageSize":50},"IsSelectedSectionEnabled":false,"IsPickerDismissedOnSelection":false,"IsSearchCancelledAfterSelection":false,"AllowDefaultValueIfOneItem":false,"PickerItems":{"Target":{"Service":"/BoxDispatch/Services/DISPATCH.service","EntitySet":"TransportIdHelpSet"},"DisplayValue":"{TransName}","ReturnValue":"{TransporterId}"}}],"Caption":"Fill below details to generate dispatch ID","Visible":true}]}],"_Type":"Page","_Name":"Main","Caption":"Box Dispatch","ActionBar":{"Items":[{"_Name":"Generate","Caption":"Generate","Position":"Right","IsIconCircular":false,"Visible":true,"OnPress":"/BoxDispatch/Actions/GenerateDispatchID.action"}],"_Name":"ActionBar1"},"ToolBar":{"Items":[{"_Type":"Control.Type.ToolbarItem","_Name":"Signout","Caption":"Sign Out","Enabled":true,"Visible":true,"Clickable":true,"Style":"","OnPress":"/BoxDispatch/Actions/Logout.action"}]}}
+module.exports = {"Controls":[{"_Type":"Control.Type.FormCellContainer","_Name":"FormCellContainer0","Sections":[{"Controls":[{"_Type":"Control.Type.FormCell.SimpleProperty","_Name":"DriverName","IsEditable":true,"IsVisible":true,"Caption":"Driver Name","PlaceHolder":"Enter Name","Enabled":true},{"_Type":"Control.Type.FormCell.SimpleProperty","_Name":"DriverLicense","IsEditable":true,"IsVisible":true,"Caption":"Driver License","PlaceHolder":"Enter License Number","Enabled":true},{"_Type":"Control.Type.FormCell.SimpleProperty","_Name":"VehicleNo","IsEditable":true,"IsVisible":true,"Caption":"Vehicle Number","PlaceHolder":"Enter Vehicle Number ","KeyboardType":"Default","AlternateInput":"None","Enabled":true},{"validationProperties":{"SeparatorIsHidden":true,"ValidationViewIsHidden":true},"_Type":"Control.Type.FormCell.ListPicker","_Name":"TransporterId","IsEditable":true,"IsVisible":true,"AllowMultipleSelection":false,"AllowEmptySelection":false,"Caption":"Transporter ID","DataPaging":{"ShowLoadingIndicator":false,"PageSize":50},"IsSelectedSectionEnabled":false,"IsPickerDismissedOnSelection":false,"IsSearchCancelledAfterSelection":false,"AllowDefaultValueIfOneItem":false,"PickerItems":{"Target":{"Service":"/BoxDispatch/Services/DISPATCH.service","EntitySet":"TransportIdHelpSet"},"DisplayValue":"{TransName}","ReturnValue":"{TransporterId}"}}],"_Name":"FormCellSection0","Caption":"Fill below details to generate dispatch ID","Visible":true}]}],"_Type":"Page","_Name":"Main","Caption":"Box Dispatch","ActionBar":{"Items":[{"_Name":"Generate","Caption":"Generate","Position":"Right","IsIconCircular":false,"Visible":true,"OnPress":"/BoxDispatch/Actions/GenerateDispatchID.action"}],"_Name":"ActionBar1"},"ToolBar":{"Items":[{"_Type":"Control.Type.ToolbarItem","_Name":"Signout","Caption":"Sign Out","Enabled":true,"Visible":true,"Clickable":true,"Style":"","OnPress":"/BoxDispatch/Actions/Logout.action"}]}}
 
 /***/ }),
 
@@ -810,6 +998,26 @@ module.exports = {"Animated":true,"CompletionTimeout":3,"Message":"Checking for 
 /***/ ((module) => {
 
 module.exports = {"Animated":true,"Duration":2,"Message":"Update application complete","_Type":"Action.Type.ToastMessage"}
+
+/***/ }),
+
+/***/ "./build.definitions/BoxDispatch/Actions/CancelDispatch.action":
+/*!*********************************************************************!*\
+  !*** ./build.definitions/BoxDispatch/Actions/CancelDispatch.action ***!
+  \*********************************************************************/
+/***/ ((module) => {
+
+module.exports = {"_Type":"Action.Type.ODataService.DeleteEntity","ActionResult":{"_Name":"CancelDispatch"},"OnFailure":"/BoxDispatch/Actions/FailureMessage.action","OnSuccess":"/BoxDispatch/Actions/ClosePage.action","Target":{"Service":"/BoxDispatch/Services/DISPATCH.service","EntitySet":"DispatchDetailsSet"}}
+
+/***/ }),
+
+/***/ "./build.definitions/BoxDispatch/Actions/CancelDispatchConfirmation.action":
+/*!*********************************************************************************!*\
+  !*** ./build.definitions/BoxDispatch/Actions/CancelDispatchConfirmation.action ***!
+  \*********************************************************************************/
+/***/ ((module) => {
+
+module.exports = {"_Type":"Action.Type.Message","ActionResult":{"_Name":"CancelDispatchConfirmation"},"Message":"Are you sure to cancel dispatch {#Page:Main/#ClientData/HeaderDetail/DispatchId} ?","Title":"Confirmation","OKCaption":"Yes","OnOK":"/BoxDispatch/Rules/CancelDispatch.js","CancelCaption":"No"}
 
 /***/ }),
 
@@ -879,7 +1087,7 @@ module.exports = {"_Type":"Action.Type.Navigation","PageToOpen":"/BoxDispatch/Pa
   \****************************************************************/
 /***/ ((module) => {
 
-module.exports = {"_Type":"Action.Type.Navigation","PageToOpen":"/BoxDispatch/Pages/Main.page","ClearHistory":false,"NavigationType":"Outer"}
+module.exports = {"_Type":"Action.Type.Navigation","PageToOpen":"/BoxDispatch/Pages/Main.page","ClearHistory":true,"NavigationType":"Outer"}
 
 /***/ }),
 
@@ -949,7 +1157,17 @@ module.exports = {"Animated":true,"Duration":2,"Message":"Application data servi
   \*********************************************************************/
 /***/ ((module) => {
 
-module.exports = {"_Type":"Action.Type.ODataService.UpdateEntity","ActionResult":{"_Name":"StopBoxLoading"},"OnFailure":"/BoxDispatch/Actions/FailureMessage.action","OnSuccess":"/BoxDispatch/Actions/StopBoxLoadingSuccess.action","ShowActivityIndicator":true,"Target":{"Service":"/BoxDispatch/Services/DISPATCH.service","EntitySet":"DispatchDetailsSet"},"Properties":{"BoxId":"","TransporterId":"#Page:Main/#ClientData/HeaderDetail/Transporter","VehicleNo":"#Page:Main/#ClientData/HeaderDetail/VehicleNo","DriverName":"#Page:Main/#ClientData/HeaderDetail/DriverName","DriverLicense":"#Page:Main/#ClientData/HeaderDetail/DriverLicense","LoadingsDate":"#Page:Main/#ClientData/HeaderDetail/LoadingsDate","LoadingsTime":"#Page:Main/#ClientData/HeaderDetail/LoadingsTime","LoadingeDate":"#Page:Main/#ClientData/HeaderDetail/LoadingeDate","LoadingeTime":"#Page:Main/#ClientData/HeaderDetail/LoadingeTime"}}
+module.exports = {"_Type":"Action.Type.ODataService.UpdateEntity","ActionResult":{"_Name":"StopBoxLoading"},"OnFailure":"/BoxDispatch/Rules/StopBoxLoadingFailure.js","OnSuccess":"/BoxDispatch/Actions/StopBoxLoadingSuccess.action","ShowActivityIndicator":true,"Target":{"Service":"/BoxDispatch/Services/DISPATCH.service","EntitySet":"DispatchDetailsSet"},"Properties":{"BoxId":"","DispatchId":"#Page:Main/#ClientData/HeaderDetail/DispatchId","TransporterId":"#Page:Main/#ClientData/HeaderDetail/Transporter","VehicleNo":"#Page:Main/#ClientData/HeaderDetail/VehicleNo","DriverName":"#Page:Main/#ClientData/HeaderDetail/DriverName","DriverLicense":"#Page:Main/#ClientData/HeaderDetail/DriverLicense","LoadingsDate":"#Page:Main/#ClientData/HeaderDetail/LoadingsDate","LoadingsTime":"#Page:Main/#ClientData/HeaderDetail/LoadingsTime","LoadingeDate":"#Page:Main/#ClientData/HeaderDetail/LoadingeDate","LoadingeTime":"#Page:Main/#ClientData/HeaderDetail/LoadingeTime"}}
+
+/***/ }),
+
+/***/ "./build.definitions/BoxDispatch/Actions/StopBoxLoadingFailureMessage.action":
+/*!***********************************************************************************!*\
+  !*** ./build.definitions/BoxDispatch/Actions/StopBoxLoadingFailureMessage.action ***!
+  \***********************************************************************************/
+/***/ ((module) => {
+
+module.exports = {"_Type":"Action.Type.Message","ActionResult":{"_Name":"StopBoxLoadingFailureMessage"},"Message":"An error occurred while processing your request. please try again","Title":"Warning","OnOK":"/BoxDispatch/Actions/NavToMain.action"}
 
 /***/ }),
 
@@ -959,7 +1177,7 @@ module.exports = {"_Type":"Action.Type.ODataService.UpdateEntity","ActionResult"
   \****************************************************************************/
 /***/ ((module) => {
 
-module.exports = {"_Type":"Action.Type.Message","ActionResult":{"_Name":"StopBoxLoadingSuccess"},"Message":"Loading of boxes for dispatch ID {#Page:Main/#ClientData/HeaderDetail/DispatchId} completed successfully","Title":"Success","OKCaption":"Ok","OnOK":"/BoxDispatch/Actions/NavToMain.action"}
+module.exports = {"_Type":"Action.Type.Message","ActionResult":{"_Name":"StopBoxLoadingSuccess"},"Message":"{#Page:Main/#ClientData/HeaderDetail/Count} boxes scanned successfully for dispatch ID {#Page:Main/#ClientData/HeaderDetail/DispatchId}","Title":"Success","OKCaption":"Ok","OnOK":"/BoxDispatch/Actions/NavToMain.action"}
 
 /***/ }),
 
@@ -1003,16 +1221,6 @@ module.exports = {"DestinationName":"DISPATCH","Headers":{"loginId":"/BoxDispatc
 
 /***/ }),
 
-/***/ "./build.definitions/version.mdkbundlerversion":
-/*!*****************************************************!*\
-  !*** ./build.definitions/version.mdkbundlerversion ***!
-  \*****************************************************/
-/***/ ((module) => {
-
-module.exports = "1.1\n"
-
-/***/ }),
-
 /***/ "./build.definitions/application-index.js":
 /*!************************************************!*\
   !*** ./build.definitions/application-index.js ***!
@@ -1024,6 +1232,8 @@ let boxdispatch_actions_appupdate_action = __webpack_require__(/*! ./BoxDispatch
 let boxdispatch_actions_appupdatefailuremessage_action = __webpack_require__(/*! ./BoxDispatch/Actions/AppUpdateFailureMessage.action */ "./build.definitions/BoxDispatch/Actions/AppUpdateFailureMessage.action")
 let boxdispatch_actions_appupdateprogressbanner_action = __webpack_require__(/*! ./BoxDispatch/Actions/AppUpdateProgressBanner.action */ "./build.definitions/BoxDispatch/Actions/AppUpdateProgressBanner.action")
 let boxdispatch_actions_appupdatesuccessmessage_action = __webpack_require__(/*! ./BoxDispatch/Actions/AppUpdateSuccessMessage.action */ "./build.definitions/BoxDispatch/Actions/AppUpdateSuccessMessage.action")
+let boxdispatch_actions_canceldispatch_action = __webpack_require__(/*! ./BoxDispatch/Actions/CancelDispatch.action */ "./build.definitions/BoxDispatch/Actions/CancelDispatch.action")
+let boxdispatch_actions_canceldispatchconfirmation_action = __webpack_require__(/*! ./BoxDispatch/Actions/CancelDispatchConfirmation.action */ "./build.definitions/BoxDispatch/Actions/CancelDispatchConfirmation.action")
 let boxdispatch_actions_closepage_action = __webpack_require__(/*! ./BoxDispatch/Actions/ClosePage.action */ "./build.definitions/BoxDispatch/Actions/ClosePage.action")
 let boxdispatch_actions_failuremessage_action = __webpack_require__(/*! ./BoxDispatch/Actions/FailureMessage.action */ "./build.definitions/BoxDispatch/Actions/FailureMessage.action")
 let boxdispatch_actions_generatedispatchid_action = __webpack_require__(/*! ./BoxDispatch/Actions/GenerateDispatchID.action */ "./build.definitions/BoxDispatch/Actions/GenerateDispatchID.action")
@@ -1038,6 +1248,7 @@ let boxdispatch_actions_service_initializeonline_action = __webpack_require__(/*
 let boxdispatch_actions_service_initializeonlinefailuremessage_action = __webpack_require__(/*! ./BoxDispatch/Actions/Service/InitializeOnlineFailureMessage.action */ "./build.definitions/BoxDispatch/Actions/Service/InitializeOnlineFailureMessage.action")
 let boxdispatch_actions_service_initializeonlinesuccessmessage_action = __webpack_require__(/*! ./BoxDispatch/Actions/Service/InitializeOnlineSuccessMessage.action */ "./build.definitions/BoxDispatch/Actions/Service/InitializeOnlineSuccessMessage.action")
 let boxdispatch_actions_stopboxloading_action = __webpack_require__(/*! ./BoxDispatch/Actions/StopBoxLoading.action */ "./build.definitions/BoxDispatch/Actions/StopBoxLoading.action")
+let boxdispatch_actions_stopboxloadingfailuremessage_action = __webpack_require__(/*! ./BoxDispatch/Actions/StopBoxLoadingFailureMessage.action */ "./build.definitions/BoxDispatch/Actions/StopBoxLoadingFailureMessage.action")
 let boxdispatch_actions_stopboxloadingsuccess_action = __webpack_require__(/*! ./BoxDispatch/Actions/StopBoxLoadingSuccess.action */ "./build.definitions/BoxDispatch/Actions/StopBoxLoadingSuccess.action")
 let boxdispatch_actions_stoploadconfirmation_action = __webpack_require__(/*! ./BoxDispatch/Actions/StopLoadConfirmation.action */ "./build.definitions/BoxDispatch/Actions/StopLoadConfirmation.action")
 let boxdispatch_actions_uploadattachment_action = __webpack_require__(/*! ./BoxDispatch/Actions/UploadAttachment.action */ "./build.definitions/BoxDispatch/Actions/UploadAttachment.action")
@@ -1048,6 +1259,7 @@ let boxdispatch_pages_boxload_page = __webpack_require__(/*! ./BoxDispatch/Pages
 let boxdispatch_pages_main_page = __webpack_require__(/*! ./BoxDispatch/Pages/Main.page */ "./build.definitions/BoxDispatch/Pages/Main.page")
 let boxdispatch_rules_appupdatefailure_js = __webpack_require__(/*! ./BoxDispatch/Rules/AppUpdateFailure.js */ "./build.definitions/BoxDispatch/Rules/AppUpdateFailure.js")
 let boxdispatch_rules_appupdatesuccess_js = __webpack_require__(/*! ./BoxDispatch/Rules/AppUpdateSuccess.js */ "./build.definitions/BoxDispatch/Rules/AppUpdateSuccess.js")
+let boxdispatch_rules_canceldispatch_js = __webpack_require__(/*! ./BoxDispatch/Rules/CancelDispatch.js */ "./build.definitions/BoxDispatch/Rules/CancelDispatch.js")
 let boxdispatch_rules_generatedispatchsuccessok_js = __webpack_require__(/*! ./BoxDispatch/Rules/GenerateDispatchSuccessOk.js */ "./build.definitions/BoxDispatch/Rules/GenerateDispatchSuccessOk.js")
 let boxdispatch_rules_onloadingpageloads_js = __webpack_require__(/*! ./BoxDispatch/Rules/onLoadingPageLoads.js */ "./build.definitions/BoxDispatch/Rules/onLoadingPageLoads.js")
 let boxdispatch_rules_onloadingpageunloads_js = __webpack_require__(/*! ./BoxDispatch/Rules/onLoadingPageUnLoads.js */ "./build.definitions/BoxDispatch/Rules/onLoadingPageUnLoads.js")
@@ -1058,6 +1270,7 @@ let boxdispatch_rules_scanboxsuccess_js = __webpack_require__(/*! ./BoxDispatch/
 let boxdispatch_rules_setloginidheader_js = __webpack_require__(/*! ./BoxDispatch/Rules/SetLoginIdHeader.js */ "./build.definitions/BoxDispatch/Rules/SetLoginIdHeader.js")
 let boxdispatch_rules_setlogintypeheader_js = __webpack_require__(/*! ./BoxDispatch/Rules/SetLoginTypeHeader.js */ "./build.definitions/BoxDispatch/Rules/SetLoginTypeHeader.js")
 let boxdispatch_rules_startload_js = __webpack_require__(/*! ./BoxDispatch/Rules/StartLoad.js */ "./build.definitions/BoxDispatch/Rules/StartLoad.js")
+let boxdispatch_rules_stopboxloadingfailure_js = __webpack_require__(/*! ./BoxDispatch/Rules/StopBoxLoadingFailure.js */ "./build.definitions/BoxDispatch/Rules/StopBoxLoadingFailure.js")
 let boxdispatch_rules_stopload_js = __webpack_require__(/*! ./BoxDispatch/Rules/StopLoad.js */ "./build.definitions/BoxDispatch/Rules/StopLoad.js")
 let boxdispatch_rules_uploadslug_js = __webpack_require__(/*! ./BoxDispatch/Rules/UploadSlug.js */ "./build.definitions/BoxDispatch/Rules/UploadSlug.js")
 let boxdispatch_rules_validatedispatchheader_js = __webpack_require__(/*! ./BoxDispatch/Rules/ValidateDispatchHeader.js */ "./build.definitions/BoxDispatch/Rules/ValidateDispatchHeader.js")
@@ -1076,6 +1289,8 @@ module.exports = {
 	boxdispatch_actions_appupdatefailuremessage_action : boxdispatch_actions_appupdatefailuremessage_action,
 	boxdispatch_actions_appupdateprogressbanner_action : boxdispatch_actions_appupdateprogressbanner_action,
 	boxdispatch_actions_appupdatesuccessmessage_action : boxdispatch_actions_appupdatesuccessmessage_action,
+	boxdispatch_actions_canceldispatch_action : boxdispatch_actions_canceldispatch_action,
+	boxdispatch_actions_canceldispatchconfirmation_action : boxdispatch_actions_canceldispatchconfirmation_action,
 	boxdispatch_actions_closepage_action : boxdispatch_actions_closepage_action,
 	boxdispatch_actions_failuremessage_action : boxdispatch_actions_failuremessage_action,
 	boxdispatch_actions_generatedispatchid_action : boxdispatch_actions_generatedispatchid_action,
@@ -1090,6 +1305,7 @@ module.exports = {
 	boxdispatch_actions_service_initializeonlinefailuremessage_action : boxdispatch_actions_service_initializeonlinefailuremessage_action,
 	boxdispatch_actions_service_initializeonlinesuccessmessage_action : boxdispatch_actions_service_initializeonlinesuccessmessage_action,
 	boxdispatch_actions_stopboxloading_action : boxdispatch_actions_stopboxloading_action,
+	boxdispatch_actions_stopboxloadingfailuremessage_action : boxdispatch_actions_stopboxloadingfailuremessage_action,
 	boxdispatch_actions_stopboxloadingsuccess_action : boxdispatch_actions_stopboxloadingsuccess_action,
 	boxdispatch_actions_stoploadconfirmation_action : boxdispatch_actions_stoploadconfirmation_action,
 	boxdispatch_actions_uploadattachment_action : boxdispatch_actions_uploadattachment_action,
@@ -1100,6 +1316,7 @@ module.exports = {
 	boxdispatch_pages_main_page : boxdispatch_pages_main_page,
 	boxdispatch_rules_appupdatefailure_js : boxdispatch_rules_appupdatefailure_js,
 	boxdispatch_rules_appupdatesuccess_js : boxdispatch_rules_appupdatesuccess_js,
+	boxdispatch_rules_canceldispatch_js : boxdispatch_rules_canceldispatch_js,
 	boxdispatch_rules_generatedispatchsuccessok_js : boxdispatch_rules_generatedispatchsuccessok_js,
 	boxdispatch_rules_onloadingpageloads_js : boxdispatch_rules_onloadingpageloads_js,
 	boxdispatch_rules_onloadingpageunloads_js : boxdispatch_rules_onloadingpageunloads_js,
@@ -1110,6 +1327,7 @@ module.exports = {
 	boxdispatch_rules_setloginidheader_js : boxdispatch_rules_setloginidheader_js,
 	boxdispatch_rules_setlogintypeheader_js : boxdispatch_rules_setlogintypeheader_js,
 	boxdispatch_rules_startload_js : boxdispatch_rules_startload_js,
+	boxdispatch_rules_stopboxloadingfailure_js : boxdispatch_rules_stopboxloadingfailure_js,
 	boxdispatch_rules_stopload_js : boxdispatch_rules_stopload_js,
 	boxdispatch_rules_uploadslug_js : boxdispatch_rules_uploadslug_js,
 	boxdispatch_rules_validatedispatchheader_js : boxdispatch_rules_validatedispatchheader_js,
@@ -1122,6 +1340,17 @@ module.exports = {
 	tsconfig_json : tsconfig_json,
 	version_mdkbundlerversion : version_mdkbundlerversion
 }
+
+/***/ }),
+
+/***/ "./build.definitions/version.mdkbundlerversion":
+/*!*****************************************************!*\
+  !*** ./build.definitions/version.mdkbundlerversion ***!
+  \*****************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = "1.1\n";
 
 /***/ }),
 

@@ -3,7 +3,7 @@
 	"ActionResult": {
 		"_Name": "StopBoxLoadingSuccess"
 	},
-	"Message": "Loading of boxes for dispatch ID {#Page:Main/#ClientData/HeaderDetail/DispatchId} completed successfully",
+	"Message": "{#Page:Main/#ClientData/HeaderDetail/Count} boxes scanned successfully for dispatch ID {#Page:Main/#ClientData/HeaderDetail/DispatchId}",
 	"Title": "Success",
 	"OKCaption": "Ok",
 	"OnOK": "/BoxDispatch/Actions/NavToMain.action"

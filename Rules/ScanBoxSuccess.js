@@ -9,10 +9,11 @@ export default function ScanBoxSuccess(clientAPI) {
     const scannedResult = clientAPI.getValue();
     let box = "", plate = "", label = "";
 
-    if (scannedResult.length === 17) {
+    if (scannedResult.length === 17 || scannedResult.length === 18) {
         box = scannedResult;
     } else if (scannedResult.length === 30) {
-        plate = scannedResult.split(":")[0];
+        // plate = scannedResult.split(":")[0];
+        plate = scannedResult;
     } else if (scannedResult.length === 27) {
         label = scannedResult;
     } else {

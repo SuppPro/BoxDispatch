@@ -1,0 +1,11 @@
+{
+	"_Type": "Action.Type.Message",
+	"ActionResult": {
+		"_Name": "CancelDispatchConfirmation"
+	},
+	"Message": "Are you sure to cancel dispatch {#Page:Main/#ClientData/HeaderDetail/DispatchId} ?",
+	"Title": "Confirmation",
+	"OKCaption": "Yes",
+	"OnOK": "/BoxDispatch/Rules/CancelDispatch.js",
+	"CancelCaption": "No"
+}
