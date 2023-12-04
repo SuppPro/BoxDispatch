@@ -1,10 +1,21 @@
 {
 	"Controls": [
 		{
+			"FilterFeedbackBar": {
+				"ShowAllFilters": true,
+				"_Type": "Control.Type.FilterFeedbackBar"
+			},
 			"_Type": "Control.Type.SectionedTable",
 			"_Name": "SectionedTable",
 			"Sections": [
 				{
+					"Separators": {
+						"TopSectionSeparator": false,
+						"BottomSectionSeparator": true,
+						"HeaderSeparator": true,
+						"FooterSeparator": true,
+						"ControlSeparator": true
+					},
 					"_Type": "Section.Type.ProfileHeader",
 					"_Name": "ProfileHeader",
 					"Visible": true,
@@ -21,42 +32,50 @@
 						{
 							"_Type": "Control.Type.FormCell.SimpleProperty",
 							"_Name": "ScanSticker",
-							"IsEditable": true,
 							"IsVisible": true,
+							"Separator": true,
 							"Caption": "Scan",
 							"PlaceHolder": "Scan Sticker",
 							"OnValueChange": "/BoxDispatch/Rules/ScanBoxSuccess.js",
 							"AlternateInput": "Barcode",
-							"Enabled": false
+							"Enabled": false,
+							"IsEditable": true
 						},
 						{
 							"_Type": "Control.Type.FormCell.Attachment",
 							"_Name": "Attachment",
 							"IsVisible": false,
 							"Separator": true,
-							"OnValueChange": "/BoxDispatch/Actions/UploadAttachment.action",
+							"OnValueChange": "/BoxDispatch/Rules/uploadAttachment.js",
 							"AttachmentActionType": [
-								"TakePhoto",
 								"AddPhoto",
+								"TakePhoto",
 								"SelectFile"
 							],
 							"AttachmentTitle": "Add Photos",
 							"AllowedFileTypes": [
-								"jpg",
-								"png"
+								"png",
+								"jpg"
 							]
 						},
 						{
 							"_Type": "Control.Type.FormCell.Note",
 							"_Name": "FormCellNote",
-							"IsEditable": false,
 							"IsVisible": true,
 							"Separator": true,
 							"PlaceHolder": "Scanned Boxes",
 							"MaxNumberOfLines": 1000,
-							"Enabled": false
+							"Enabled": false,
+							"IsEditable": false
 						}
 					],
+					"Separators": {
+						"TopSectionSeparator": false,
+						"BottomSectionSeparator": true,
+						"HeaderSeparator": true,
+						"FooterSeparator": true,
+						"ControlSeparator": true
+					},
 					"Visible": true,
 					"EmptySection": {
 						"FooterVisible": false

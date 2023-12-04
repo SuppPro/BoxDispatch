@@ -444,7 +444,7 @@ function StartLoad(clientAPI) {
   let hrs = checkLength(sdate.getHours().toString());
   let mins = checkLength(sdate.getMinutes().toString());
   let sec = checkLength(sdate.getSeconds().toString());
-  clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.PickCount = 0;
+  clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.PicCount = 0;
   clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.LoadingsTime = hrs + mins + sec;
   clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.LoadingsDate = sdate.getFullYear() + month + date;
 }
@@ -569,8 +569,8 @@ __webpack_require__.r(__webpack_exports__);
  * @param {IClientAPI} clientAPI
  */
 function UploadSlug(clientAPI) {
-  clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.PickCount += 1;
-  return clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.DispatchId + "/" + "PIC" + clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.PickCount + "/" + "Photo" + clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.PickCount + ".jpg";
+  clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.PicCount += 1;
+  return clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.DispatchId + "/" + "PIC" + clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.PicCount + "/" + clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.File;
 }
 
 /***/ }),
@@ -657,7 +657,7 @@ __webpack_require__.r(__webpack_exports__);
 function ValidateUpload(clientAPI) {
   const items = clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().LineItem;
   if (items.length > 0) {
-    if (clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.PickCount > 10) {
+    if (clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.PicCount > 10) {
       return clientAPI.executeAction({
         'Name': "/BoxDispatch/Actions/FailureMessage.action",
         "Properties": {
@@ -726,6 +726,29 @@ function onLoadingPageUnLoads(clientAPI) {
 
 /***/ }),
 
+/***/ "./build.definitions/BoxDispatch/Rules/uploadAttachment.js":
+/*!*****************************************************************!*\
+  !*** ./build.definitions/BoxDispatch/Rules/uploadAttachment.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ uploadAttachment)
+/* harmony export */ });
+/**
+ * Describe this function...
+ * @param {IClientAPI} clientAPI
+ */
+function uploadAttachment(clientAPI) {
+  const attachments = clientAPI.getClientData().AddedAttachments;
+  clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.File = attachments[attachments.length - 1].urlString;
+  clientAPI.executeAction("/BoxDispatch/Actions/UploadAttachment.action");
+}
+
+/***/ }),
+
 /***/ "./build.definitions/BoxDispatch/Styles/Styles.css":
 /*!*********************************************************!*\
   !*** ./build.definitions/BoxDispatch/Styles/Styles.css ***!
@@ -733,8 +756,8 @@ function onLoadingPageUnLoads(clientAPI) {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 // Imports
-var ___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___ = __webpack_require__(/*! ../../../../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/noSourceMaps.js */ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/noSourceMaps.js");
-var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/api.js */ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/api.js");
+var ___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___ = __webpack_require__(/*! ../../../../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.10.1/node_modules/css-loader/dist/runtime/noSourceMaps.js */ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.10.1/node_modules/css-loader/dist/runtime/noSourceMaps.js");
+var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.10.1/node_modules/css-loader/dist/runtime/api.js */ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.10.1/node_modules/css-loader/dist/runtime/api.js");
 var ___CSS_LOADER_EXPORT___ = ___CSS_LOADER_API_IMPORT___(___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___);
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, `/* The LESS stylesheet provides the ability to define styling styles that can be used to style the UI in the MDK app.
@@ -772,8 +795,8 @@ module.exports = ___CSS_LOADER_EXPORT___;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 // Imports
-var ___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___ = __webpack_require__(/*! ../../../../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/noSourceMaps.js */ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/noSourceMaps.js");
-var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/api.js */ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/api.js");
+var ___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___ = __webpack_require__(/*! ../../../../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.10.1/node_modules/css-loader/dist/runtime/noSourceMaps.js */ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.10.1/node_modules/css-loader/dist/runtime/noSourceMaps.js");
+var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.10.1/node_modules/css-loader/dist/runtime/api.js */ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.10.1/node_modules/css-loader/dist/runtime/api.js");
 var ___CSS_LOADER_EXPORT___ = ___CSS_LOADER_API_IMPORT___(___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___);
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, `/* The LESS stylesheet provides the ability to define styling styles that can be used to style the UI in the MDK app.
@@ -810,8 +833,8 @@ module.exports = ___CSS_LOADER_EXPORT___;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 // Imports
-var ___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___ = __webpack_require__(/*! ../../../../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/noSourceMaps.js */ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/noSourceMaps.js");
-var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/api.js */ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/api.js");
+var ___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___ = __webpack_require__(/*! ../../../../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.10.1/node_modules/css-loader/dist/runtime/noSourceMaps.js */ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.10.1/node_modules/css-loader/dist/runtime/noSourceMaps.js");
+var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.10.1/node_modules/css-loader/dist/runtime/api.js */ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.10.1/node_modules/css-loader/dist/runtime/api.js");
 var ___CSS_LOADER_EXPORT___ = ___CSS_LOADER_API_IMPORT___(___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___);
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, ``, ""]);
@@ -821,10 +844,10 @@ module.exports = ___CSS_LOADER_EXPORT___;
 
 /***/ }),
 
-/***/ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/api.js":
-/*!***********************************************************************************************************************!*\
-  !*** ../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/api.js ***!
-  \***********************************************************************************************************************/
+/***/ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.10.1/node_modules/css-loader/dist/runtime/api.js":
+/*!************************************************************************************************************************!*\
+  !*** ../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.10.1/node_modules/css-loader/dist/runtime/api.js ***!
+  \************************************************************************************************************************/
 /***/ ((module) => {
 
 "use strict";
@@ -916,10 +939,10 @@ module.exports = function (cssWithMappingToString) {
 
 /***/ }),
 
-/***/ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/noSourceMaps.js":
-/*!********************************************************************************************************************************!*\
-  !*** ../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.8.1/node_modules/css-loader/dist/runtime/noSourceMaps.js ***!
-  \********************************************************************************************************************************/
+/***/ "../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.10.1/node_modules/css-loader/dist/runtime/noSourceMaps.js":
+/*!*********************************************************************************************************************************!*\
+  !*** ../../extbin/local/openvscode-server/extensions/mdk-vsc-wing-23.10.1/node_modules/css-loader/dist/runtime/noSourceMaps.js ***!
+  \*********************************************************************************************************************************/
 /***/ ((module) => {
 
 "use strict";
@@ -937,7 +960,7 @@ module.exports = function (i) {
   \**********************************************************/
 /***/ ((module) => {
 
-module.exports = {"Controls":[{"_Type":"Control.Type.SectionedTable","_Name":"SectionedTable","Sections":[{"_Type":"Section.Type.ProfileHeader","_Name":"ProfileHeader","Visible":true,"ProfileHeader":{"DetailImage":"sap-icon://shipping-status","DetailImageIsCircular":false,"Headline":"Dispatch ID: {#Page:Main/#ClientData/HeaderDetail/DispatchId}","Subheadline":"","ActivityItems":[]}},{"Controls":[{"_Type":"Control.Type.FormCell.SimpleProperty","_Name":"ScanSticker","IsEditable":true,"IsVisible":true,"Caption":"Scan","PlaceHolder":"Scan Sticker","OnValueChange":"/BoxDispatch/Rules/ScanBoxSuccess.js","AlternateInput":"Barcode","Enabled":false},{"_Type":"Control.Type.FormCell.Attachment","_Name":"Attachment","IsVisible":false,"Separator":true,"OnValueChange":"/BoxDispatch/Actions/UploadAttachment.action","AttachmentActionType":["TakePhoto","AddPhoto","SelectFile"],"AttachmentTitle":"Add Photos","AllowedFileTypes":["jpg","png"]},{"_Type":"Control.Type.FormCell.Note","_Name":"FormCellNote","IsEditable":false,"IsVisible":true,"Separator":true,"PlaceHolder":"Scanned Boxes","MaxNumberOfLines":1000,"Enabled":false}],"Visible":true,"EmptySection":{"FooterVisible":false},"_Type":"Section.Type.FormCell","_Name":"SectionFormCell0"}]}],"_Type":"Page","_Name":"BoxLoad","Caption":"Box Loading","PrefersLargeCaption":false,"OnLoaded":"/BoxDispatch/Rules/onLoadingPageLoads.js","OnUnloaded":"/BoxDispatch/Rules/onLoadingPageUnLoads.js","ActionBar":{"Items":[{"_Name":"StartLoad","Caption":"Start","Position":"Right","IsIconCircular":false,"Visible":true,"OnPress":"/BoxDispatch/Rules/StartLoad.js"},{"_Name":"StopLoad","Caption":"Stop","Position":"Right","IsIconCircular":false,"Visible":false,"OnPress":"/BoxDispatch/Actions/StopLoadConfirmation.action"}],"_Name":"ActionBar1"},"ToolBar":{"Items":[{"_Type":"Control.Type.ToolbarItem","_Name":"ToolbarItem0","Caption":"Cancel","Enabled":true,"Visible":true,"Clickable":true,"ItemType":"Normal","Style":"","OnPress":"/BoxDispatch/Actions/CancelDispatchConfirmation.action"}]}}
+module.exports = {"Controls":[{"FilterFeedbackBar":{"ShowAllFilters":true,"_Type":"Control.Type.FilterFeedbackBar"},"_Type":"Control.Type.SectionedTable","_Name":"SectionedTable","Sections":[{"Separators":{"TopSectionSeparator":false,"BottomSectionSeparator":true,"HeaderSeparator":true,"FooterSeparator":true,"ControlSeparator":true},"_Type":"Section.Type.ProfileHeader","_Name":"ProfileHeader","Visible":true,"ProfileHeader":{"DetailImage":"sap-icon://shipping-status","DetailImageIsCircular":false,"Headline":"Dispatch ID: {#Page:Main/#ClientData/HeaderDetail/DispatchId}","Subheadline":"","ActivityItems":[]}},{"Controls":[{"_Type":"Control.Type.FormCell.SimpleProperty","_Name":"ScanSticker","IsVisible":true,"Separator":true,"Caption":"Scan","PlaceHolder":"Scan Sticker","OnValueChange":"/BoxDispatch/Rules/ScanBoxSuccess.js","AlternateInput":"Barcode","Enabled":false,"IsEditable":true},{"_Type":"Control.Type.FormCell.Attachment","_Name":"Attachment","IsVisible":false,"Separator":true,"OnValueChange":"/BoxDispatch/Rules/uploadAttachment.js","AttachmentActionType":["AddPhoto","TakePhoto","SelectFile"],"AttachmentTitle":"Add Photos","AllowedFileTypes":["png","jpg"]},{"_Type":"Control.Type.FormCell.Note","_Name":"FormCellNote","IsVisible":true,"Separator":true,"PlaceHolder":"Scanned Boxes","MaxNumberOfLines":1000,"Enabled":false,"IsEditable":false}],"Separators":{"TopSectionSeparator":false,"BottomSectionSeparator":true,"HeaderSeparator":true,"FooterSeparator":true,"ControlSeparator":true},"Visible":true,"EmptySection":{"FooterVisible":false},"_Type":"Section.Type.FormCell","_Name":"SectionFormCell0"}]}],"_Type":"Page","_Name":"BoxLoad","Caption":"Box Loading","PrefersLargeCaption":false,"OnLoaded":"/BoxDispatch/Rules/onLoadingPageLoads.js","OnUnloaded":"/BoxDispatch/Rules/onLoadingPageUnLoads.js","ActionBar":{"Items":[{"_Name":"StartLoad","Caption":"Start","Position":"Right","IsIconCircular":false,"Visible":true,"OnPress":"/BoxDispatch/Rules/StartLoad.js"},{"_Name":"StopLoad","Caption":"Stop","Position":"Right","IsIconCircular":false,"Visible":false,"OnPress":"/BoxDispatch/Actions/StopLoadConfirmation.action"}],"_Name":"ActionBar1"},"ToolBar":{"Items":[{"_Type":"Control.Type.ToolbarItem","_Name":"ToolbarItem0","Caption":"Cancel","Enabled":true,"Visible":true,"Clickable":true,"ItemType":"Normal","Style":"","OnPress":"/BoxDispatch/Actions/CancelDispatchConfirmation.action"}]}}
 
 /***/ }),
 
@@ -1197,7 +1220,7 @@ module.exports = {"_Type":"Action.Type.Message","Message":"Are you sure to stop 
   \***********************************************************************/
 /***/ ((module) => {
 
-module.exports = {"_Type":"Action.Type.ODataService.CreateMedia","ActionResult":{"_Name":"UploadAttachment"},"ValidationRule":"/BoxDispatch/Rules/ValidateUpload.js","ShowActivityIndicator":false,"Target":{"Service":"/BoxDispatch/Services/DISPATCH.service","EntitySet":"AttachmentSet"},"Media":"#Page:BoxLoad/#Control:Attachment/#Value","Headers":{"slug":"/BoxDispatch/Rules/UploadSlug.js"}}
+module.exports = {"_Type":"Action.Type.ODataService.CreateMedia","ActionResult":{"_Name":"UploadAttachment"},"ValidationRule":"/BoxDispatch/Rules/ValidateUpload.js","ShowActivityIndicator":true,"Target":{"Service":"/BoxDispatch/Services/DISPATCH.service","EntitySet":"AttachmentSet"},"Media":"#Page:BoxLoad/#Control:Attachment/#Value","Headers":{"slug":"/BoxDispatch/Rules/UploadSlug.js"}}
 
 /***/ }),
 
@@ -1272,6 +1295,7 @@ let boxdispatch_rules_setlogintypeheader_js = __webpack_require__(/*! ./BoxDispa
 let boxdispatch_rules_startload_js = __webpack_require__(/*! ./BoxDispatch/Rules/StartLoad.js */ "./build.definitions/BoxDispatch/Rules/StartLoad.js")
 let boxdispatch_rules_stopboxloadingfailure_js = __webpack_require__(/*! ./BoxDispatch/Rules/StopBoxLoadingFailure.js */ "./build.definitions/BoxDispatch/Rules/StopBoxLoadingFailure.js")
 let boxdispatch_rules_stopload_js = __webpack_require__(/*! ./BoxDispatch/Rules/StopLoad.js */ "./build.definitions/BoxDispatch/Rules/StopLoad.js")
+let boxdispatch_rules_uploadattachment_js = __webpack_require__(/*! ./BoxDispatch/Rules/uploadAttachment.js */ "./build.definitions/BoxDispatch/Rules/uploadAttachment.js")
 let boxdispatch_rules_uploadslug_js = __webpack_require__(/*! ./BoxDispatch/Rules/UploadSlug.js */ "./build.definitions/BoxDispatch/Rules/UploadSlug.js")
 let boxdispatch_rules_validatedispatchheader_js = __webpack_require__(/*! ./BoxDispatch/Rules/ValidateDispatchHeader.js */ "./build.definitions/BoxDispatch/Rules/ValidateDispatchHeader.js")
 let boxdispatch_rules_validateupload_js = __webpack_require__(/*! ./BoxDispatch/Rules/ValidateUpload.js */ "./build.definitions/BoxDispatch/Rules/ValidateUpload.js")
@@ -1329,6 +1353,7 @@ module.exports = {
 	boxdispatch_rules_startload_js : boxdispatch_rules_startload_js,
 	boxdispatch_rules_stopboxloadingfailure_js : boxdispatch_rules_stopboxloadingfailure_js,
 	boxdispatch_rules_stopload_js : boxdispatch_rules_stopload_js,
+	boxdispatch_rules_uploadattachment_js : boxdispatch_rules_uploadattachment_js,
 	boxdispatch_rules_uploadslug_js : boxdispatch_rules_uploadslug_js,
 	boxdispatch_rules_validatedispatchheader_js : boxdispatch_rules_validatedispatchheader_js,
 	boxdispatch_rules_validateupload_js : boxdispatch_rules_validateupload_js,

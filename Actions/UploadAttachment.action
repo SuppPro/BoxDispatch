@@ -4,7 +4,7 @@
 		"_Name": "UploadAttachment"
 	},
 	"ValidationRule": "/BoxDispatch/Rules/ValidateUpload.js",
-	"ShowActivityIndicator": false,
+	"ShowActivityIndicator": true,
 	"Target": {
 		"Service": "/BoxDispatch/Services/DISPATCH.service",
 		"EntitySet": "AttachmentSet"

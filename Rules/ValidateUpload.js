@@ -3,10 +3,10 @@
  * @param {IClientAPI} clientAPI
  */
 export default function ValidateUpload(clientAPI) {
-
+    
     const items = clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().LineItem;
     if (items.length > 0) {
-        if (clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.PickCount > 10) {
+        if (clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.PicCount > 10) {
             return clientAPI.executeAction({
                 'Name': "/BoxDispatch/Actions/FailureMessage.action",
                 "Properties": {

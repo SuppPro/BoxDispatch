@@ -16,7 +16,7 @@ export default function StartLoad(clientAPI) {
     let mins = checkLength(sdate.getMinutes().toString());
     let sec = checkLength(sdate.getSeconds().toString());
 
-    clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.PickCount = 0;
+    clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.PicCount = 0;
 
     clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.LoadingsTime = hrs + mins + sec;
     clientAPI.evaluateTargetPathForAPI('#Page:Main').getClientData().HeaderDetail.LoadingsDate = sdate.getFullYear() + month + date;
